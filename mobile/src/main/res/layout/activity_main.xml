@@ -35,12 +35,6 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:orientation="vertical">
-
-                <RadioButton
-                    android:id="@+id/newSession"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Create new session..." />
             </RadioGroup>
         </ScrollView>
 
@@ -48,14 +42,14 @@
             android:id="@+id/btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Search sessions" />
+            android:text="Search sessions"/>
 
         <Button
             android:id="@+id/startSession"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start"
-            android:onClick="addRadioButtons"/>
+            android:onClick="startSession"/>
     </LinearLayout>
     </ScrollView>
 
