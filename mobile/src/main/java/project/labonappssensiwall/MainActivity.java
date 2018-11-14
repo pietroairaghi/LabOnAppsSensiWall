@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String SESSION_NAME = "Session";
     private RadioGroup sessionsRadioGroup;
 
     @Override
