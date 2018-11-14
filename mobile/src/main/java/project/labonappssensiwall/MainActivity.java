@@ -31,12 +31,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeCurrentSessions(){
+        sessionsRadioGroup.clearCheck();
         //sessionsRadioGroup.removeAllViews(); questo era per rimuoverle tutte, potrebbe servire
-        final int childCount = sessionsRadioGroup.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View v = sessionsRadioGroup.getChildAt(i);
-            // Eliminare V, come?
-            // R.removeView(v);
+        final int nButtons = sessionsRadioGroup.getChildCount();
+        for (int i = 1; i < nButtons; i++) {
+            sessionsRadioGroup.removeViewAt(1);
         }
     }
 
@@ -47,8 +46,12 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 1; i < 10; i++) {
             button = new RadioButton(getApplicationContext());
             button.setId(i);
-            button.setText("Button prova");
+            button.setText("Button prova" + i);
+            button.setTag(R.id.sessionID,i);
+            button.setTag(R.id.sessionName,"Nome Sessione " + i);
             sessionsRadioGroup.addView(button);
         }
     }
+    
+
 }

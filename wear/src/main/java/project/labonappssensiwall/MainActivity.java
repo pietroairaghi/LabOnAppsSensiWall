@@ -2,7 +2,7 @@ package project.labonappssensiwall;
 
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
-import android.widget.TextView;
+import android.view.View;import android.widget.TextView;
 
 public class MainActivity extends WearableActivity {
 
@@ -18,4 +18,6 @@ public class MainActivity extends WearableActivity {
         // Enables Always-on
         setAmbientEnabled();
     }
-}
+
+    public void addRadioButtons(View view) {
+    }}
