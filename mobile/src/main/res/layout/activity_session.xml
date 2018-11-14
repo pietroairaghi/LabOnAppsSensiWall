@@ -22,24 +22,28 @@
 
         <Button
             android:id="@+id/buttonSettings"
+            android:onClick="clickedbuttonSetting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Settings" />
 
         <Button
             android:id="@+id/buttonTest"
+            android:onClick="clickedbuttonTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Test functions" />
 
         <Button
             android:id="@+id/buttonStart"
+            android:onClick="clickedbuttonStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Start Game" />
 
         <Button
             android:id="@+id/buttonDraw"
+            android:onClick="clickedbuttonDraw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Draw with smartwatch" />
