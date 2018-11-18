@@ -7,7 +7,7 @@
   },
   "client": [
     {
-      "client_info": {
+      "client_info": { 
         "mobilesdk_app_id": "1:790301129538:android:11b35905c36acbbb",
         "android_client_info": {
           "package_name": "project.labonappssensiwall"
