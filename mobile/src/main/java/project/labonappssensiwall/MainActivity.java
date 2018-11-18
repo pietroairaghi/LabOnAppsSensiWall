@@ -1,8 +1,10 @@
 package project.labonappssensiwall;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,10 +13,19 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String SESSION_NAME = "Session";
     public static final String SESSION_ID = "Session ID";
+    private static final String TAG = "MainActivity";
+
 
     private RadioGroup sessionsRadioGroup;
 
@@ -37,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addRadioButtonToGroup(String text, String sessoinName, int sessoinID) {
+    private void addRadioButtonToGroup(String text, String sessionName, String sessionID) {
         final int nButtons = sessionsRadioGroup.getChildCount();
 
         RadioButton button;
         button = new RadioButton(getApplicationContext());
         button.setId(nButtons+1);
         button.setText(text);
-        button.setTag(R.id.sessionID,sessoinID);
-        button.setTag(R.id.sessionName,sessoinName);
+        button.setTag(R.id.sessionID,sessionID);
+        button.setTag(R.id.sessionName,sessionName);
         sessionsRadioGroup.addView(button);
     }
 
@@ -57,10 +68,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshSessionList() {
         removeCurrentSessions();
-        addRadioButtonToGroup("Create new session...","newActivity",0);
-        for(int i = 1; i < 10; i++) {
-            addRadioButtonToGroup("Button prova" + i,"Nome Sessione " + i,i);
-        }
+        addRadioButtonToGroup("Create new session...","newActivity","0");
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("sessions").get()
+        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String sessionID = document.getId();
+                        String sessionName = document.get("name").toString();
+                        addRadioButtonToGroup(sessionName,sessionName,sessionID);
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
     }
 
     public void startSession(View view){
