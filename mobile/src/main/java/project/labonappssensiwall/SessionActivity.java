@@ -23,7 +23,10 @@ import java.util.Map;
 
 public class SessionActivity extends AppCompatActivity {
 
+    public static final String SESSION_ID = "Session ID";
     private static final String TAG = "SessionActivity";
+
+    private String sessionID; // global to be send to other activities
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class SessionActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         String sessionName = extras.getString(MainActivity.SESSION_NAME);
-        String sessionID = extras.getString(MainActivity.SESSION_ID);
+        sessionID = extras.getString(MainActivity.SESSION_ID);
 
         if(sessionID.equals("newSession")) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -70,7 +73,7 @@ public class SessionActivity extends AppCompatActivity {
 
     public void clickedbuttonTest(View view) {
         Intent intent = new Intent(this, TestActivity.class);
-        // intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(SESSION_ID, sessionID); // put the session ID to be read from test activty
         startActivity(intent);
     }
 
