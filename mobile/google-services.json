@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "790301129538",
+    "firebase_url": "https://sensiwall-loa.firebaseio.com",
+    "project_id": "sensiwall-loa",
+    "storage_bucket": "sensiwall-loa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790301129538:android:11b35905c36acbbb",
+        "android_client_info": {
+          "package_name": "project.labonappssensiwall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "790301129538-d1s7url70gbgaa04mfp16omlfb91u36r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.labonappssensiwall",
+            "certificate_hash": "07013e79f33e223a1b7af67d698bda0896915f5e"
+          }
+        },
+        {
+          "client_id": "790301129538-jr4u0mpscb8fcnchshfopqtsbcr0f5ck.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsN7cU1XH3o3cvNFvZhuLoLSZi_gYownk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "790301129538-jr4u0mpscb8fcnchshfopqtsbcr0f5ck.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
