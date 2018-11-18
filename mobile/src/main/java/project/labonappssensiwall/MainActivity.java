@@ -99,9 +99,7 @@ public class MainActivity extends AppCompatActivity {
         }
         View radioButton = sessionsRadioGroup.findViewById(selectedID);
         String sessionName = (String) radioButton.getTag(R.id.sessionName);
-        int sessionID = (int) radioButton.getTag(R.id.sessionID);
-
-
+        String sessionID = radioButton.getTag(R.id.sessionID).toString();
 
 
         Intent intent = new Intent(this, SessionActivity.class);
