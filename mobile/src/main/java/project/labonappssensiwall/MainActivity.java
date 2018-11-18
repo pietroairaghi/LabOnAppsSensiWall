@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshSessionList() {
         removeCurrentSessions();
-        addRadioButtonToGroup("Create new session...","newActivity","0");
+        addRadioButtonToGroup("Create new session...","newSession","newSession");
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
