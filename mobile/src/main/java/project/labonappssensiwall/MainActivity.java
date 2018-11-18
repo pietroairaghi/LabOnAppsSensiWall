@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("sessions").get()
-        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        CollectionReference sessions =  db.collection("sessions");
+
+        sessions.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -108,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-    
 
+
+    public void provaPietro_onClick(View view) {
+        Intent intent = new Intent(this, settingTestPietro.class);
+        startActivity(intent);
+    }
 }
