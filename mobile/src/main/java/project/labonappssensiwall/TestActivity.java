@@ -32,6 +32,7 @@ public class TestActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<StringWithTag> list = new ArrayList<>();
+    private List<StringWithTag> listDivisions = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +67,38 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        // 
+        // read
+        DocumentReference session =  db.collection("sessions/"+sessionID+"/settings").document("divisions");
 
+        session.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                       // Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        int divisions = document.getDouble("value").intValue();
+                        for(int i = 1; i <= divisions; i++){
+                            listDivisions.add(new StringWithTag("Division "+i, Integer.toString(i)));
+                        }
 
+                        // Create new spinner for devices selection
+                        Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
+                        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (getApplicationContext(), android.R.layout.simple_spinner_item, listDivisions);
+                        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                        //   R.array.planets_array, android.R.layout.simple_spinner_item);
+
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinnerDivisions.setAdapter(adapter);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
 
         // on create call setColor setShape setScale
     }
