@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -19,13 +20,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class TestActivity extends AppCompatActivity {
 
     enum COLOR {BLACK, GREY, BLUE, CLIMBING};
 
-    private static final String TAG = "TestActivity";
+    private static final String TAG = "TestActivityJacopo";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private List<StringWithTag> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,38 +44,68 @@ public class TestActivity extends AppCompatActivity {
         String sessionID = extras.getString(SessionActivity.SESSION_ID);
 
         // read database with doc ID, set screen and division spinners
-        DocumentReference currentSession =  db.collection("sessions").document(sessionID);
+        CollectionReference devices =  db.collection("sessions/"+sessionID+"/devices");
 
-        currentSession.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        devices.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-
-                        // create adapter for screen and division spinner
-
-                    } else {
-                        Log.d(TAG, "No such document");
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String deviceName = document.get("name").toString();
+                        String deviceID = document.getId();
+                        Log.d(TAG,deviceID + " - " + deviceName);
+                        list.add(new StringWithTag(deviceName, deviceID));
                     }
+
+                    populateSpinnerScreen();
+
                 } else {
-                    Log.d(TAG, "get failed with ", task.getException());
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.planets_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        // 
+
+
 
         // on create call setColor setShape setScale
     }
+
+
+    private void populateSpinnerScreen(){
+        // Create new spinner for devices selection
+        Spinner spinnerDevices = findViewById(R.id.spinnerDevices);
+        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (this, android.R.layout.simple_spinner_item, list);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        //   R.array.planets_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDevices.setAdapter(adapter);
+
+        spinnerDevices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
+                String tag = s.tag;
+                String selectedItemText = s.string;
+
+                // Notify the selected item text
+                 Toast.makeText
+                         (getApplicationContext(), "Selected : " + selectedItemText + " and ID: "+tag, Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Log.d(TAG, "nothing");
+            }
+        });
+
+    }
+
 
     // Set color functions
     public void clickedbuttonColor(View view) {
