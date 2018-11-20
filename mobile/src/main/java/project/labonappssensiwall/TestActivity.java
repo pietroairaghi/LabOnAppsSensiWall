@@ -1,6 +1,7 @@
 package project.labonappssensiwall;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,18 +33,37 @@ public class TestActivity extends AppCompatActivity {
     private static final String TAG = "TestActivityJacopo";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private List<StringWithTag> list = new ArrayList<>();
+    private List<StringWithTag> listDevices = new ArrayList<>();
     private List<StringWithTag> listDivisions = new ArrayList<>();
+
+    private String sessionID;
+
+    // Selected variables for new drawing (used when push button DRAW)
+    private String selectedDevice;
+    private int selectedDivision;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
 
         // get intent with session id
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        String sessionID = extras.getString(SessionActivity.SESSION_ID);
+        sessionID = extras.getString(SessionActivity.SESSION_ID);
+
+        // Get devices from DB and populate spinner
+        getSessionDevices();
+
+        // Get divisions from DB and populate spinner
+        getSessionDivisions();
+
+        // Set dafault selected color
+        setColor(R.id.buttonBlack);
+    }
+
+    private void getSessionDevices() {
 
         // read database with doc ID, set screen and division spinners
         CollectionReference devices =  db.collection("sessions/"+sessionID+"/devices");
@@ -55,10 +76,10 @@ public class TestActivity extends AppCompatActivity {
                         String deviceName = document.get("name").toString();
                         String deviceID = document.getId();
                         Log.d(TAG,deviceID + " - " + deviceName);
-                        list.add(new StringWithTag(deviceName, deviceID));
+                        listDevices.add(new StringWithTag(deviceName, deviceID));
                     }
 
-                    populateSpinnerScreen();
+                    populateSpinnerDevices();
 
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
@@ -67,7 +88,43 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        // read
+    }
+
+    private void populateSpinnerDevices(){
+
+        // Create new spinner for devices selection
+        Spinner spinnerDevices = findViewById(R.id.spinnerDevices);
+        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (this, android.R.layout.simple_spinner_item, listDevices);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerDevices.setAdapter(adapter);
+
+        // Set on select functions
+        spinnerDevices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
+                String tag = s.tag;
+                String string = s.string;
+
+                // Set selected for drawing
+                selectedDevice = tag;
+
+                // Notify the selected item text
+                Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+tag, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //
+            }
+        });
+
+    }
+
+    private void getSessionDivisions() {
+
         DocumentReference session =  db.collection("sessions/"+sessionID+"/settings").document("divisions");
 
         session.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -76,20 +133,13 @@ public class TestActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                       // Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        // Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         int divisions = document.getDouble("value").intValue();
                         for(int i = 1; i <= divisions; i++){
                             listDivisions.add(new StringWithTag("Division "+i, Integer.toString(i)));
                         }
 
-                        // Create new spinner for devices selection
-                        Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
-                        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (getApplicationContext(), android.R.layout.simple_spinner_item, listDivisions);
-                        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                        //   R.array.planets_array, android.R.layout.simple_spinner_item);
-
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        spinnerDivisions.setAdapter(adapter);
+                        populateSpinnerDivisions();
 
                     } else {
                         Log.d(TAG, "No such document");
@@ -100,37 +150,36 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        // on create call setColor setShape setScale
     }
 
+    private void populateSpinnerDivisions() {
 
-    private void populateSpinnerScreen(){
-        // Create new spinner for devices selection
-        Spinner spinnerDevices = findViewById(R.id.spinnerDevices);
-        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (this, android.R.layout.simple_spinner_item, list);
-        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-        //   R.array.planets_array, android.R.layout.simple_spinner_item);
-
+        // Create new spinner for division selection
+        Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
+        ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (getApplicationContext(), android.R.layout.simple_spinner_item, listDivisions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDevices.setAdapter(adapter);
+        spinnerDivisions.setAdapter(adapter);
 
-        spinnerDevices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Set on select functions
+        spinnerDivisions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
                 String tag = s.tag;
-                String selectedItemText = s.string;
+                String string = s.string;
+
+                // Set selected for drawing
+                selectedDivision = Integer.parseInt(tag);
 
                 // Notify the selected item text
-                 Toast.makeText
-                         (getApplicationContext(), "Selected : " + selectedItemText + " and ID: "+tag, Toast.LENGTH_SHORT)
-                        .show();
+                Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+ tag, Toast.LENGTH_SHORT);
+                toast.show();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.d(TAG, "nothing");
+                //
             }
         });
 
@@ -138,20 +187,44 @@ public class TestActivity extends AppCompatActivity {
 
 
     // Set color functions
-    public void clickedbuttonColor(View view) {
+    public void clickedbuttonBlack(View view) {
 
-        // call set color
+        setColor(R.id.buttonBlack);
+
     }
 
-    public void setColor(COLOR color) {
+    public void clickedbuttonGrey(View view) {
 
-        switch(color) {
-            case BLACK:
-                break;
-            case GREY:
-                break;
-            case BLUE:
-                break;
+        setColor(R.id.buttonGrey);
+
+    }
+
+    public void setColor(int selectedColor) {
+
+        // disable all button
+        //List<Button> buttons = new ArrayList<Button>();
+        int[] BUTTON_IDS = {
+                R.id.buttonBlack,
+                R.id.buttonGrey,
+        };
+
+        for(int id : BUTTON_IDS) {
+            Button button = (Button)findViewById(id);
+
+            if(id == selectedColor)
+            {
+                button.setEnabled(false);
+
+                // Notify the selected item text
+                Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + id, Toast.LENGTH_SHORT);
+                toast.show();
+
+            } else {
+                button.setEnabled(true);
+            }
         }
+
+        Button button = (Button)findViewById(selectedColor);
     }
+
 }
