@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -25,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -42,6 +46,11 @@ public class TestActivity extends AppCompatActivity {
     private String selectedDevice;
     private int selectedDivision;
     private String selectedColorHex;
+    private String selectedShape;
+    private int positionX, positionY, scale;
+
+    // Seekbars
+    private SeekBar seekBarPositionX, seekBarPositionY, seekBarScale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +70,19 @@ public class TestActivity extends AppCompatActivity {
         getSessionDivisions();
 
         // Set dafault selected color
+        selectedColorHex = "#FF0000";
         setColor(R.id.buttonRed);
+
+        // Set default shape
+        selectedShape = "square";
+
+        // Set seekbars
+        seekBarPositionX = (SeekBar) findViewById(R.id.seekBarPositionX);
+        seekBarPositionY = (SeekBar) findViewById(R.id.seekBarPositionY);
+        seekBarScale = (SeekBar) findViewById(R.id.seekBarScale);
+        setSeekBar(seekBarPositionX);
+        setSeekBar(seekBarPositionY);
+        setSeekBar(seekBarScale);
     }
 
     private void getSessionDevices() {
@@ -113,7 +134,7 @@ public class TestActivity extends AppCompatActivity {
 
                 // Notify the selected item text
                 Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+tag, Toast.LENGTH_SHORT);
-                toast.show();
+                //toast.show();
             }
 
             @Override
@@ -135,7 +156,7 @@ public class TestActivity extends AppCompatActivity {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         // Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        int divisions = document.getDouble("value").intValue();
+                        int divisions = Integer.parseInt(document.getString("value"));
                         for(int i = 1; i <= divisions; i++){
                             listDivisions.add(new StringWithTag("Division "+i, Integer.toString(i)));
                         }
@@ -154,6 +175,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void populateSpinnerDivisions() {
+
 
         // Create new spinner for division selection
         Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
@@ -175,7 +197,7 @@ public class TestActivity extends AppCompatActivity {
 
                 // Notify the selected item text
                 Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+ tag, Toast.LENGTH_SHORT);
-                toast.show();
+                //toast.show();
             }
 
             @Override
@@ -240,7 +262,7 @@ public class TestActivity extends AppCompatActivity {
 
                 // Notify the selected item text
                 Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + selectedColorHex, Toast.LENGTH_SHORT);
-                toast.show();
+                //toast.show();
 
             } else {
                 button.setEnabled(true);
@@ -250,4 +272,92 @@ public class TestActivity extends AppCompatActivity {
         Button button = (Button)findViewById(selectedColor);
     }
 
+    public void clickedbuttonSquare(View view) {
+        selectedShape = "square";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void clickedbuttonCross(View view) {
+        selectedShape = "cross";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    private void setSeekBar(SeekBar seekBar) {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            //int progress = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+               // progress = progresValue;
+                //Toast.makeText(getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+               // Toast.makeText(getApplicationContext(), "Started tracking seekbar", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //textView.setText("Covered: " + progress + "/" + seekBar.getMax());
+
+                int progress = seekBar.getProgress();
+
+                if(seekBar == seekBarPositionX){
+                    positionX = progress;
+                    Toast.makeText(getApplicationContext(), "Position X: " + positionX, Toast.LENGTH_SHORT).show();
+                }
+
+                if(seekBar == seekBarPositionY){
+                    positionY = progress;
+                    Toast.makeText(getApplicationContext(), "Position Y: " + positionY, Toast.LENGTH_SHORT).show();
+                }
+
+                if(seekBar == seekBarScale){
+                    scale = progress;
+                    Toast.makeText(getApplicationContext(), "Scale: " + scale, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
+
+    public void clickedbuttonDraw(View view) {
+
+        Map<String, Object> newDrawing = new HashMap<>();
+        newDrawing.put("shape", selectedShape);
+        newDrawing.put("color", selectedColorHex);
+        newDrawing.put("division", selectedDivision);
+        newDrawing.put("positionx", positionX);
+        newDrawing.put("positiony", positionY);
+        newDrawing.put("scale", scale);
+
+
+        db.collection("sessions/"+sessionID+"/devices/"+selectedDevice+"/drawings").document()
+                .set(newDrawing)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Toast toast = Toast.makeText(getApplicationContext(), "Drawing successfully sent! ", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+    }
 }
