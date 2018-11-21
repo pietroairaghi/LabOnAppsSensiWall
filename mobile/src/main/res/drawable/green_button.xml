@@ -4,7 +4,7 @@
     <!-- disable state. -->
     <item android:state_enabled="false">
         <shape android:shape="oval">
-            <solid android:color="#FF0000"/>
+            <solid android:color="#009933"/>
             <stroke android:color="#3366CC" android:width="4dp"/>
         </shape>
     </item>
@@ -13,8 +13,8 @@
     <item android:state_pressed="false">
         <shape android:shape="rectangle">
             <corners android:radius="8dp"/>
-            <solid android:color="#ff0000"/>
-            <stroke android:color="#ff0000" android:width="0dp"/>
+            <solid android:color="#009933"/>
+            <stroke android:color="#009933" android:width="0dp"/>
         </shape>
     </item>
 
@@ -22,8 +22,8 @@
     <item android:state_enabled="true">
         <shape android:shape="rectangle">
             <corners android:radius="8dp"/>
-            <solid android:color="#ff0000"/>
-            <stroke android:color="#ff0000" android:width="4dp"/>
+            <solid android:color="#009933"/>
+            <stroke android:color="#009933" android:width="4dp"/>
         </shape>
     </item>
 

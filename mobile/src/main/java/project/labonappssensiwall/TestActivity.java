@@ -28,7 +28,7 @@ import java.util.List;
 
 public class TestActivity extends AppCompatActivity {
 
-    enum COLOR {BLACK, GREY, BLUE, CLIMBING};
+    //enum COLOR {BLACK, GREY, BLUE, CLIMBING};
 
     private static final String TAG = "TestActivityJacopo";
 
@@ -41,6 +41,7 @@ public class TestActivity extends AppCompatActivity {
     // Selected variables for new drawing (used when push button DRAW)
     private String selectedDevice;
     private int selectedDivision;
+    private String selectedColorHex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class TestActivity extends AppCompatActivity {
         getSessionDivisions();
 
         // Set dafault selected color
-        setColor(R.id.buttonBlack);
+        setColor(R.id.buttonRed);
     }
 
     private void getSessionDevices() {
@@ -187,16 +188,34 @@ public class TestActivity extends AppCompatActivity {
 
 
     // Set color functions
-    public void clickedbuttonBlack(View view) {
-
-        setColor(R.id.buttonBlack);
-
+    public void clickedbuttonRed(View view) {
+        setColor(R.id.buttonRed);
+        selectedColorHex = "#FF0000";
     }
 
-    public void clickedbuttonGrey(View view) {
+    public void clickedbuttonOrange(View view) {
+        setColor(R.id.buttonOrange);
+        selectedColorHex = "#FF6600";
+    }
 
-        setColor(R.id.buttonGrey);
+    public void clickedbuttonYellow(View view) {
+        setColor(R.id.buttonYellow);
+        selectedColorHex = "#FFFF00";
+    }
 
+    public void clickedbuttonGreen(View view) {
+        setColor(R.id.buttonGreen);
+        selectedColorHex = "#009933";
+    }
+
+    public void clickedbuttonBlue(View view) {
+        setColor(R.id.buttonBlue);
+        selectedColorHex = "#0000FF";
+    }
+
+    public void clickedbuttonViolet(View view) {
+        setColor(R.id.buttonViolet);
+        selectedColorHex = "#6600CC";
     }
 
     public void setColor(int selectedColor) {
@@ -204,8 +223,12 @@ public class TestActivity extends AppCompatActivity {
         // disable all button
         //List<Button> buttons = new ArrayList<Button>();
         int[] BUTTON_IDS = {
-                R.id.buttonBlack,
-                R.id.buttonGrey,
+                R.id.buttonRed,
+                R.id.buttonOrange,
+                R.id.buttonYellow,
+                R.id.buttonGreen,
+                R.id.buttonBlue,
+                R.id.buttonViolet,
         };
 
         for(int id : BUTTON_IDS) {
@@ -216,7 +239,7 @@ public class TestActivity extends AppCompatActivity {
                 button.setEnabled(false);
 
                 // Notify the selected item text
-                Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + id, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + selectedColorHex, Toast.LENGTH_SHORT);
                 toast.show();
 
             } else {
