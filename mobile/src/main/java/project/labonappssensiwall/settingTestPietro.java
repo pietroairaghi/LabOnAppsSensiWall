@@ -1,40 +1,24 @@
 package project.labonappssensiwall;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.RingtonePreference;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
-import android.widget.BaseAdapter;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +26,7 @@ import java.util.Map;
 public class settingTestPietro extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "PietroActivity";
-    private Map<String, List<HashMap<String,Object>>> settingsByCategory = new HashMap<>();
-    private HashMap<String,String> allSettings = new HashMap<>(); // id setting, setting type
-    private HashMap<String,String> sessionSettings = new HashMap<>();
+    private SessionSettings sessionSettings;
     private static ContextThemeWrapper contextThemeWrapper = null;
     private String sessionID;
 
@@ -59,91 +41,19 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
 
         sessionID = "q6DOpI3PtoiLOAYkA1kZ";
 
-        loadSessionSettings(sessionID);
-        loadAndPopulateFireBaseSettings();
-    }
+        sessionSettings = new SessionSettings(sessionID);
 
-
-    protected void loadSessionSettings(String sessionID){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        CollectionReference sessionsSettings =  db.collection("sessions/"+sessionID+"/settings");
-
-        sessionsSettings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        sessionSettings.setListener(new SessionSettings.sessionSettingsListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String settingID  = document.getId();
-                        String value = document.getString("value");
-                        sessionSettings.put(settingID,value);
-                    }
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
+            public void onCompleteLoading() {
+                removeAllLocalPreferences();
+                populateSettings();
+                addPreferenceListener();
             }
         });
     }
 
-
-    protected void loadAndPopulateFireBaseSettings(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        CollectionReference settings =  db.collection("settings");
-
-        settings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String categoryID = document.getString("category");
-                        String settingID  = document.getId();
-                        String settingType  = document.getString("type");
-                        List<HashMap<String,Object>> currentCatData = settingsByCategory.get(categoryID);
-                        if (currentCatData==null) {
-                            currentCatData = new ArrayList<>();
-                        }
-                        HashMap<String,Object> currentData = (HashMap<String,Object>)document.getData();
-                        currentData.put("id",settingID);
-                        currentCatData.add(currentData);
-                        settingsByCategory.put(categoryID,currentCatData);
-                        allSettings.put(settingID,settingType);
-                    }
-                    removeAllLocalPreferences();
-                    populateSettings();
-                    addPreferenceListener();
-                } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            }
-        });
-    }
-
-    protected void viewCosi(){
-        for (Map.Entry<String, List<HashMap<String,Object>>> entry : settingsByCategory.entrySet()) {
-
-            String categoryName = entry.getKey();
-
-            Log.d(TAG,"trovata categoria" + categoryName);
-
-
-            List<HashMap<String,Object>> datas = entry.getValue();
-
-            for (HashMap<String, Object> data : datas) {
-
-                Log.d(TAG,"---------------");
-
-                for (Map.Entry me : data.entrySet()) {
-                    Log.d(TAG,"Key: "+me.getKey() + " & Value: " + me.getValue().toString());
-                }
-
-            }
-        }
-    }
-
-    protected void populateSettings(){
+    protected void populateSettings() {
 
         //rimuovere le shared preferences
         //PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply();
@@ -157,10 +67,10 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
         contextThemeWrapper = new ContextThemeWrapper(activityContext, themeTypedValue.resourceId);
 
 
-        for (Map.Entry<String, List<HashMap<String,Object>>> categoryMap : settingsByCategory.entrySet()) {
+        for (Map.Entry<String, List<HashMap<String, Object>>> categoryMap : sessionSettings.getSettingsByCategory().entrySet()) {
 
             String categoryName = categoryMap.getKey();
-            List<HashMap<String,Object>> datas = categoryMap.getValue();
+            List<HashMap<String, Object>> datas = categoryMap.getValue();
 
             PreferenceCategory preferenceCategory = newPreferenceCategory(categoryName, contextThemeWrapper);
 
@@ -169,92 +79,69 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
 
             // Then their child to it
             for (HashMap<String, Object> data : datas) {
-                addPreference(data,preferenceCategory);
+                addPreference(data, preferenceCategory);
             }
         }
 
 
     }
 
-    protected void removeAllLocalPreferences(){
-        for (Map.Entry<String, String> entry : allSettings.entrySet()) {
+    protected void removeAllLocalPreferences() {
+        for (Map.Entry<String, String> entry : sessionSettings.getAllSettingsTypes().entrySet()) {
             String settingID = entry.getKey();
 
-            SharedPreferences mySPrefs =PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences mySPrefs = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = mySPrefs.edit();
             editor.remove(settingID);
             editor.apply();
         }
     }
 
-    protected void syncPreferences(){
-        for (Map.Entry<String, String> entry : sessionSettings.entrySet()) {
-            String settingID = entry.getKey();
-            String settingVal = entry.getValue();
-
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = sp.edit();
-
-            editor.putString(settingID, settingVal);
-            editor.commit();
-
-            /*
-            SharedPreferences mySPrefs =PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = mySPrefs.edit();
-            editor.remove(settingID);
-            editor.apply();
-            */
-
-            Log.d(TAG,"ciao");
-        }
-    }
-
-    protected void addPreferenceListener(){
+    protected void addPreferenceListener() {
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
 
-
-    protected PreferenceCategory newPreferenceCategory(String categoryName, ContextThemeWrapper contextThemeWrapper){
+    protected PreferenceCategory newPreferenceCategory(String categoryName, ContextThemeWrapper contextThemeWrapper) {
         PreferenceCategory preferenceCategory = new PreferenceCategory(contextThemeWrapper);
         preferenceCategory.setTitle(categoryName);
 
         return preferenceCategory;
     }
 
-    protected void addPreference(HashMap<String, Object> data,PreferenceCategory preferenceCategory){
+    protected void addPreference(HashMap<String, Object> data, PreferenceCategory preferenceCategory) {
         String preferenceType = data.get("type").toString();
 
-        switch (preferenceType){
+        switch (preferenceType) {
             case "checkbox":
-                addCheckboxPreference(data,preferenceCategory);
+                addCheckboxPreference(data, preferenceCategory);
                 break;
             case "text":
-                addTextPreference(data,preferenceCategory);
+                addTextPreference(data, preferenceCategory);
                 break;
         }
 
 
     }
 
-    protected Object getDefaultOrSessionValue(String key, HashMap<String,Object> data){
-        Object sessionVal = sessionSettings.get(key);
+    protected Object getDefaultOrSessionValue(String key, HashMap<String, Object> data) {
+        Object sessionVal = sessionSettings.getSessionSettings().get(key);
 
-        if(sessionVal!=null){
+        if (sessionVal != null) {
             return sessionVal;
         }
 
         return data.get("default value");
     }
 
-    protected void addCheckboxPreference(HashMap<String,Object> data,PreferenceCategory pc){
+    protected void addCheckboxPreference(HashMap<String, Object> data, PreferenceCategory pc) {
         String preferenceName = data.get("name").toString();
-        String preferenceKey  = data.get("id").toString();
+        String preferenceKey = data.get("id").toString();
 
-        Object value = getDefaultOrSessionValue(preferenceKey,data);
+        Object value = getDefaultOrSessionValue(preferenceKey, data);
         int preferenceValue = 0;
 
-        if(value != null){
+        if (value != null) {
             preferenceValue = Integer.parseInt(value.toString());
         }
 
@@ -262,27 +149,27 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
         preference.setTitle(preferenceName);
         preference.setKey(preferenceKey);
 
-        if (preferenceValue == 1){
+        if (preferenceValue == 1) {
             preference.setChecked(true);
-        }else{
+        } else {
             preference.setChecked(false);
         }
 
         pc.addPreference(preference);
     }
 
-    protected void addTextPreference(HashMap<String,Object> data,PreferenceCategory pc){
+    protected void addTextPreference(HashMap<String, Object> data, PreferenceCategory pc) {
         String preferenceName = data.get("name").toString();
-        String preferenceKey  = data.get("id").toString();
+        String preferenceKey = data.get("id").toString();
 
-        EditTextPreference  preference = new EditTextPreference(contextThemeWrapper);
+        EditTextPreference preference = new EditTextPreference(contextThemeWrapper);
         preference.setTitle(preferenceName);
         preference.setKey(preferenceKey);
 
-        Object value = getDefaultOrSessionValue(preferenceKey,data);
+        Object value = getDefaultOrSessionValue(preferenceKey, data);
         String preferenceValue = "";
 
-        if(value != null){
+        if (value != null) {
             preferenceValue = value.toString();
         }
         preference.setText(preferenceValue);
@@ -293,32 +180,32 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        String settingType = allSettings.get(key);
+        String settingType = sessionSettings.getAllSettingsTypes().get(key);
         Preference pref = getPreferenceManager().findPreference(key);
 
         String currentValue = "";
 
-        switch (settingType){
+        switch (settingType) {
             case "checkbox":
-                boolean isChecked = ((CheckBoxPreference)pref).isChecked();
-                currentValue = isChecked?"1":"0";
+                boolean isChecked = ((CheckBoxPreference) pref).isChecked();
+                currentValue = isChecked ? "1" : "0";
                 break;
             case "text":
-                currentValue = ((EditTextPreference)pref).getText();
+                currentValue = ((EditTextPreference) pref).getText();
                 break;
         }
 
-        saveSettingOnFirebase(sessionID, key,currentValue);
+        saveSettingOnFirebase(sessionID, key, currentValue);
 
     }
 
-    private void saveSettingOnFirebase(String sessionID, String key, String value){
+    private void saveSettingOnFirebase(String sessionID, String key, String value) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> settingMap = new HashMap<>();
         settingMap.put("value", value);
 
-        db.collection("sessions/"+sessionID+"/settings").document(key)
+        db.collection("sessions/" + sessionID + "/settings").document(key)
                 .set(settingMap)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

@@ -2,7 +2,6 @@ package project.labonappssensiwall;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -15,9 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
-public class sessionSettings {
+public class SessionSettings {
 
     private String sessionID;
     private static final String TAG = "PietroActivity";
@@ -26,17 +24,37 @@ public class sessionSettings {
     private HashMap<String,String> allSettingsTypes = new HashMap<>();
     private HashMap<String,String> sessionSettings = new HashMap<>();
     private FirebaseFirestore db;
+    private boolean sessionSettingsLoaded = false; private boolean defaultSettingsLoaded = false;
+    private sessionSettingsListener listener;
 
-    public sessionSettings(String sessionID){
+    public SessionSettings(String sessionID){
         this.sessionID = sessionID;
+        this.listener = null;
 
-        Log.d(TAG,"start retriving session");
         db = FirebaseFirestore.getInstance();
 
         loadSessionSettings();
-        Log.d(TAG,"loaded settings sessions");
         loadDefaultSettings();
-        Log.d(TAG,"loaded settings default");
+    }
+
+    public interface sessionSettingsListener {
+        // These methods are the different events and
+        // need to pass relevant arguments related to the event triggered
+        //void onSessionLoaded();
+        //void onDefaultSessionLoaded();
+        // or when data has been loaded
+        void onCompleteLoading();
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setListener(sessionSettingsListener listener) {
+        this.listener = listener;
+    }
+
+    protected void checkForOnComplete(){
+        if(sessionSettingsLoaded && defaultSettingsLoaded){
+            listener.onCompleteLoading();
+        }
     }
 
     protected void loadSessionSettings(){
@@ -51,7 +69,11 @@ public class sessionSettings {
                         String value = document.getString("value");
                         sessionSettings.put(settingID,value);
                     }
-
+                    sessionSettingsLoaded = true;
+                    if (listener != null) {
+                        //listener.onSessionLoaded();
+                        checkForOnComplete();
+                    }
                 } else {
                     Log.d(TAG,"error retrieving session settings");
                 }
@@ -62,7 +84,6 @@ public class sessionSettings {
     protected void loadDefaultSettings(){
         CollectionReference settings =  db.collection("settings");
 
-        final CountDownLatch done = new CountDownLatch(1);
         settings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -82,18 +103,16 @@ public class sessionSettings {
                         settingsByCategory.put(categoryID,currentCatData);
                         allSettingsTypes.put(settingID,settingType);
                     }
-                    done.countDown();
+                    defaultSettingsLoaded = true;
+                    if (listener != null) {
+                        //listener.onDefaultSessionLoaded();
+                        checkForOnComplete();
+                    }
                 } else {
                     Log.d(TAG,"error retrieving default settings");
                 }
             }
         });
-
-        try {
-            done.await(); //it will wait till the response is received from firebase.
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public Object getSetting(String key){
@@ -140,5 +159,9 @@ public class sessionSettings {
 
     public Map<String, List<HashMap<String, Object>>> getSettingsByCategory() {
         return settingsByCategory;
+    }
+
+    public HashMap<String, String> getSessionSettings() {
+        return sessionSettings;
     }
 }
