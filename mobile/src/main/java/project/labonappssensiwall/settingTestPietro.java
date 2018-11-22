@@ -53,6 +53,18 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removePreferenceListener();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        addPreferenceListener();
+    }
+
     protected void populateSettings() {
 
         //rimuovere le shared preferences
@@ -95,6 +107,10 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
             editor.remove(settingID);
             editor.apply();
         }
+    }
+
+    protected void removePreferenceListener(){
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
     }
 
     protected void addPreferenceListener() {
