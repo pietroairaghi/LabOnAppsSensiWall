@@ -1,21 +1,33 @@
 package project.labonappssensiwall;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.preference.RingtonePreference;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,39 +39,80 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class settingTestPietro extends PreferenceActivity {
+public class settingTestPietro extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "PietroActivity";
-    private static Map<String, List<Object>> settingsByCategory = new HashMap<>();
+    private Map<String, List<HashMap<String,Object>>> settingsByCategory = new HashMap<>();
+    private HashMap<String,String> allSettings = new HashMap<>(); // id setting, setting type
+    private HashMap<String,String> sessionSettings = new HashMap<>();
+    private static ContextThemeWrapper contextThemeWrapper = null;
+    private String sessionID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loadAndPopulateFireBaseSettings();
+        // get intent with session id
+        //Intent intent = getIntent();
+        //Bundle extras = intent.getExtras();
+        //String sessionID = extras.getString(SessionActivity.SESSION_ID);
 
+        sessionID = "q6DOpI3PtoiLOAYkA1kZ";
+
+        loadSessionSettings(sessionID);
+        loadAndPopulateFireBaseSettings();
+    }
+
+
+    protected void loadSessionSettings(String sessionID){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        CollectionReference sessionsSettings =  db.collection("sessions/"+sessionID+"/settings");
+
+        sessionsSettings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String settingID  = document.getId();
+                        String value = document.getString("value");
+                        sessionSettings.put(settingID,value);
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
     }
 
 
     protected void loadAndPopulateFireBaseSettings(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        CollectionReference sessions =  db.collection("settings");
+        CollectionReference settings =  db.collection("settings");
 
-        sessions.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        settings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        String categoryID = document.get("category").toString();
-                        List<Object> currentCatData = settingsByCategory.get(categoryID);
+                        String categoryID = document.getString("category");
+                        String settingID  = document.getId();
+                        String settingType  = document.getString("type");
+                        List<HashMap<String,Object>> currentCatData = settingsByCategory.get(categoryID);
                         if (currentCatData==null) {
                             currentCatData = new ArrayList<>();
                         }
-                        currentCatData.add(document.getData());
+                        HashMap<String,Object> currentData = (HashMap<String,Object>)document.getData();
+                        currentData.put("id",settingID);
+                        currentCatData.add(currentData);
                         settingsByCategory.put(categoryID,currentCatData);
+                        allSettings.put(settingID,settingType);
                     }
+                    removeAllLocalPreferences();
                     populateSettings();
+                    addPreferenceListener();
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
                     toast.show();
@@ -69,22 +122,20 @@ public class settingTestPietro extends PreferenceActivity {
     }
 
     protected void viewCosi(){
-        for (Map.Entry<String, List<Object>> entry : settingsByCategory.entrySet()) {
+        for (Map.Entry<String, List<HashMap<String,Object>>> entry : settingsByCategory.entrySet()) {
 
             String categoryName = entry.getKey();
 
             Log.d(TAG,"trovata categoria" + categoryName);
 
 
-            List<Object> datas = entry.getValue();
+            List<HashMap<String,Object>> datas = entry.getValue();
 
-            for (Object data : datas) {
+            for (HashMap<String, Object> data : datas) {
 
                 Log.d(TAG,"---------------");
 
-                HashMap<String,Object> mapData = (HashMap<String, Object>)data;
-
-                for (Map.Entry me : mapData.entrySet()) {
+                for (Map.Entry me : data.entrySet()) {
                     Log.d(TAG,"Key: "+me.getKey() + " & Value: " + me.getValue().toString());
                 }
 
@@ -96,20 +147,20 @@ public class settingTestPietro extends PreferenceActivity {
 
         //rimuovere le shared preferences
         //PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit().clear().apply();
-
         Context activityContext = this;
 
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activityContext);
         setPreferenceScreen(preferenceScreen);
 
+
         TypedValue themeTypedValue = new TypedValue();
-        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(activityContext, themeTypedValue.resourceId);
+        contextThemeWrapper = new ContextThemeWrapper(activityContext, themeTypedValue.resourceId);
 
 
-        for (Map.Entry<String, List<Object>> categoryMap : settingsByCategory.entrySet()) {
+        for (Map.Entry<String, List<HashMap<String,Object>>> categoryMap : settingsByCategory.entrySet()) {
 
             String categoryName = categoryMap.getKey();
-            List<Object> datas = categoryMap.getValue();
+            List<HashMap<String,Object>> datas = categoryMap.getValue();
 
             PreferenceCategory preferenceCategory = newPreferenceCategory(categoryName, contextThemeWrapper);
 
@@ -117,12 +168,51 @@ public class settingTestPietro extends PreferenceActivity {
             getPreferenceScreen().addPreference(preferenceCategory);
 
             // Then their child to it
-            for (Object data : datas) {
-                addPreference(data,preferenceCategory,contextThemeWrapper);
+            for (HashMap<String, Object> data : datas) {
+                addPreference(data,preferenceCategory);
             }
+        }
 
+
+    }
+
+    protected void removeAllLocalPreferences(){
+        for (Map.Entry<String, String> entry : allSettings.entrySet()) {
+            String settingID = entry.getKey();
+
+            SharedPreferences mySPrefs =PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = mySPrefs.edit();
+            editor.remove(settingID);
+            editor.apply();
         }
     }
+
+    protected void syncPreferences(){
+        for (Map.Entry<String, String> entry : sessionSettings.entrySet()) {
+            String settingID = entry.getKey();
+            String settingVal = entry.getValue();
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sp.edit();
+
+            editor.putString(settingID, settingVal);
+            editor.commit();
+
+            /*
+            SharedPreferences mySPrefs =PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = mySPrefs.edit();
+            editor.remove(settingID);
+            editor.apply();
+            */
+
+            Log.d(TAG,"ciao");
+        }
+    }
+
+    protected void addPreferenceListener(){
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+    }
+
 
 
     protected PreferenceCategory newPreferenceCategory(String categoryName, ContextThemeWrapper contextThemeWrapper){
@@ -132,57 +222,118 @@ public class settingTestPietro extends PreferenceActivity {
         return preferenceCategory;
     }
 
-    protected void addPreference(Object data,PreferenceCategory preferenceCategory,ContextThemeWrapper contextThemeWrapper){
-        HashMap<String,Object> mapData = (HashMap<String, Object>)data;
-        String preferenceName = mapData.get("name").toString();
+    protected void addPreference(HashMap<String, Object> data,PreferenceCategory preferenceCategory){
+        String preferenceType = data.get("type").toString();
 
-//        if (getPreferenceScreen().findPreference(preferenceName) != null){
-//            return;
-//        }else{
-//            Log.d(TAG,getPreferenceScreen().findPreference(preferenceName).toString());
-//        }
+        switch (preferenceType){
+            case "checkbox":
+                addCheckboxPreference(data,preferenceCategory);
+                break;
+            case "text":
+                addTextPreference(data,preferenceCategory);
+                break;
+        }
 
-        CheckBoxPreference checkBoxPreference = new CheckBoxPreference(contextThemeWrapper);
-        checkBoxPreference.setTitle(preferenceName);
-        checkBoxPreference.setKey("checkbox");
-        checkBoxPreference.setChecked(true);
-
-        preferenceCategory.addPreference(checkBoxPreference);
 
     }
 
+    protected Object getDefaultOrSessionValue(String key, HashMap<String,Object> data){
+        Object sessionVal = sessionSettings.get(key);
 
-    protected void testPop(){
-        Context activityContext = this;
+        if(sessionVal!=null){
+            return sessionVal;
+        }
 
-        PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(activityContext);
-        setPreferenceScreen(preferenceScreen);
+        return data.get("default value");
+    }
 
-        TypedValue themeTypedValue = new TypedValue();
-        ContextThemeWrapper contextThemeWrapper = new ContextThemeWrapper(activityContext, themeTypedValue.resourceId);
+    protected void addCheckboxPreference(HashMap<String,Object> data,PreferenceCategory pc){
+        String preferenceName = data.get("name").toString();
+        String preferenceKey  = data.get("id").toString();
 
-        // We instance each Preference using our ContextThemeWrapper object
-        PreferenceCategory preferenceCategory = new PreferenceCategory(contextThemeWrapper);
-        preferenceCategory.setTitle("Category test");
+        Object value = getDefaultOrSessionValue(preferenceKey,data);
+        int preferenceValue = 0;
 
-        EditTextPreference editTextPreference = new EditTextPreference(contextThemeWrapper);
-        editTextPreference.setKey("edittext");
-        editTextPreference.setTitle("EditText test");
+        if(value != null){
+            preferenceValue = Integer.parseInt(value.toString());
+        }
 
-        CheckBoxPreference checkBoxPreference = new CheckBoxPreference(contextThemeWrapper);
-        checkBoxPreference.setTitle("Checkbox test");
-        checkBoxPreference.setKey("checkbox");
-        checkBoxPreference.setChecked(true);
+        CheckBoxPreference preference = new CheckBoxPreference(contextThemeWrapper);
+        preference.setTitle(preferenceName);
+        preference.setKey(preferenceKey);
 
-        // It's REALLY IMPORTANT to add Preferences with child Preferences to the Preference Hierarchy first
-        // Otherwise, the PreferenceManager will fail to load their keys
+        if (preferenceValue == 1){
+            preference.setChecked(true);
+        }else{
+            preference.setChecked(false);
+        }
 
-        // First we add the category to the root PreferenceScreen
-        getPreferenceScreen().addPreference(preferenceCategory);
+        pc.addPreference(preference);
+    }
 
-        // Then their child to it
-        preferenceCategory.addPreference(editTextPreference);
-        preferenceCategory.addPreference(checkBoxPreference);
+    protected void addTextPreference(HashMap<String,Object> data,PreferenceCategory pc){
+        String preferenceName = data.get("name").toString();
+        String preferenceKey  = data.get("id").toString();
+
+        EditTextPreference  preference = new EditTextPreference(contextThemeWrapper);
+        preference.setTitle(preferenceName);
+        preference.setKey(preferenceKey);
+
+        Object value = getDefaultOrSessionValue(preferenceKey,data);
+        String preferenceValue = "";
+
+        if(value != null){
+            preferenceValue = value.toString();
+        }
+        preference.setText(preferenceValue);
+
+        pc.addPreference(preference);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        String settingType = allSettings.get(key);
+        Preference pref = getPreferenceManager().findPreference(key);
+
+        String currentValue = "";
+
+        switch (settingType){
+            case "checkbox":
+                boolean isChecked = ((CheckBoxPreference)pref).isChecked();
+                currentValue = isChecked?"1":"0";
+                break;
+            case "text":
+                currentValue = ((EditTextPreference)pref).getText();
+                break;
+        }
+
+        saveSettingOnFirebase(sessionID, key,currentValue);
+
+    }
+
+    private void saveSettingOnFirebase(String sessionID, String key, String value){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> settingMap = new HashMap<>();
+        settingMap.put("value", value);
+
+        db.collection("sessions/"+sessionID+"/settings").document(key)
+                .set(settingMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                });
     }
 
 }
