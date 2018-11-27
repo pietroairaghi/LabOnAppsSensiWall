@@ -41,6 +41,7 @@ public class TestActivity extends AppCompatActivity {
     private List<StringWithTag> listDivisions = new ArrayList<>();
 
     private String sessionID;
+    private SessionSettings settings;
 
     // Selected variables for new drawing (used when push button DRAW)
     private String selectedDevice;
@@ -48,6 +49,7 @@ public class TestActivity extends AppCompatActivity {
     private String selectedColorHex;
     private String selectedShape;
     private int positionX, positionY, scale;
+
 
     // Seekbars
     private SeekBar seekBarPositionX, seekBarPositionY, seekBarScale;
@@ -63,11 +65,18 @@ public class TestActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         sessionID = extras.getString(SessionActivity.SESSION_ID);
 
+        settings = new SessionSettings(sessionID, getApplicationContext());
+
         // Get devices from DB and populate spinner
         getSessionDevices();
 
         // Get divisions from DB and populate spinner
-        getSessionDivisions();
+        settings.setListener(new SessionSettings.sessionSettingsListener() {
+            @Override
+            public void onCompleteLoading() {
+                populateSpinnerDivisions();
+            }
+        });
 
         // Set dafault selected color
         selectedColorHex = "#FF0000";
@@ -145,37 +154,13 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-    private void getSessionDivisions() {
-
-        DocumentReference session =  db.collection("sessions/"+sessionID+"/settings").document("divisions");
-
-        session.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        int divisions = Integer.parseInt(document.getString("value"));
-                        for(int i = 1; i <= divisions; i++){
-                            listDivisions.add(new StringWithTag("Division "+i, Integer.toString(i)));
-                        }
-
-                        populateSpinnerDivisions();
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-
-    }
-
     private void populateSpinnerDivisions() {
 
+        int divisions = settings.getInt("divisions");
+
+        for(int i = 1; i <= divisions; i++){
+            listDivisions.add(new StringWithTag("Division "+i, Integer.toString(i)));
+        }
 
         // Create new spinner for division selection
         Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
