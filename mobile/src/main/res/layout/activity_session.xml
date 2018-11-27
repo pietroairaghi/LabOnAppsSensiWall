@@ -47,5 +47,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Draw with smartwatch" />
+
+        <Button
+            android:id="@+id/buttonDisplay"
+            android:onClick="clickedbuttonDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Display session" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

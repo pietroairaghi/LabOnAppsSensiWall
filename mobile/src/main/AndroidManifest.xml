@@ -25,7 +25,12 @@
         <activity android:name=".SessionActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".settingTestPietro" />
-        <activity android:name=".SessionSettingsActivity"></activity>
+        <activity android:name=".SessionSettingsActivity" />
+        <activity
+            android:name=".DisplayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_display"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>
