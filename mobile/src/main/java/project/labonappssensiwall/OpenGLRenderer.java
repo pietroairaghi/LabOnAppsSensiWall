@@ -11,11 +11,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     private Triangle mTriangle;
     private Square   mSquare;
 
+    public static boolean stocazzo;
+
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(1f,0,0,1f);
         // initialize a triangle
-        //mTriangle = new Triangle();
+        mTriangle = new Triangle();
         // initialize a square
         mSquare = new Square();
     }
@@ -28,8 +30,12 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        //mTriangle.draw();
-        mSquare.draw();
+        if(stocazzo){
+            mTriangle.draw();
+        }else {
+            mTriangle.draw();
+            mSquare.draw();
+        }
     }
 
     public static int loadShader(int type, String shaderCode){
@@ -44,4 +50,11 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
         return shader;
     }
+
+
+    public static void setStocazzo(){
+        stocazzo = !stocazzo;
+    }
+
+
 }

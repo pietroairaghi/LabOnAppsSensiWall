@@ -2,6 +2,7 @@ package project.labonappssensiwall;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 public class testGLPietro extends AppCompatActivity {
 
@@ -24,5 +25,10 @@ public class testGLPietro extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         openGLView.onPause();
+    }
+
+
+    public void dacciDentro(View view) {
+        openGLView.changeCoso();
     }
 }
