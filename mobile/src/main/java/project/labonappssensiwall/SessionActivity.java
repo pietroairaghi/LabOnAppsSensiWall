@@ -66,8 +66,8 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void clickedbuttonSetting(View view) {
-        Intent intent = new Intent(this, SettingsActivity.class);
-       // intent.putExtra(EXTRA_MESSAGE, message);
+        Intent intent = new Intent(this, SessionSettingsActivity.class);
+        intent.putExtra(SESSION_ID, sessionID); // put the session ID to be read from test activty
         startActivity(intent);
     }
 

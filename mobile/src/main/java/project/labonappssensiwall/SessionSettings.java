@@ -1,9 +1,13 @@
 package project.labonappssensiwall;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,10 +30,16 @@ public class SessionSettings {
     private FirebaseFirestore db;
     private boolean sessionSettingsLoaded = false; private boolean defaultSettingsLoaded = false;
     private sessionSettingsListener listener;
+    private Context applicationContext;
 
     public SessionSettings(String sessionID){
+        this(sessionID, null);
+    }
+
+    public SessionSettings(String sessionID, Context applicationContext){
         this.sessionID = sessionID;
         this.listener = null;
+        this.applicationContext = applicationContext;
 
         db = FirebaseFirestore.getInstance();
 
@@ -163,5 +173,34 @@ public class SessionSettings {
 
     public HashMap<String, String> getSessionSettings() {
         return sessionSettings;
+    }
+
+    public void setSetting(String key, String value){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> settingMap = new HashMap<>();
+        settingMap.put("value", value);
+
+        db.collection("sessions/" + sessionID + "/settings").document(key)
+                .set(settingMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(applicationContext != null) {
+                            Toast toast = Toast.makeText(applicationContext, "Settings updated", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(applicationContext != null) {
+                            Toast toast = Toast.makeText(applicationContext, "Connection failed", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+                });
+
     }
 }

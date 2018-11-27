@@ -1,6 +1,7 @@
 package project.labonappssensiwall;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -8,24 +9,18 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class settingTestPietro extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SessionSettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String TAG = "PietroActivity";
+    private static final String TAG = "logTAG";
     private SessionSettings sessionSettings;
     private static ContextThemeWrapper contextThemeWrapper = null;
     private String sessionID;
@@ -35,11 +30,9 @@ public class settingTestPietro extends AppCompatPreferenceActivity implements Sh
         super.onCreate(savedInstanceState);
 
         // get intent with session id
-        //Intent intent = getIntent();
-        //Bundle extras = intent.getExtras();
-        //String sessionID = extras.getString(SessionActivity.SESSION_ID);
-
-        sessionID = "q6DOpI3PtoiLOAYkA1kZ";
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        sessionID = extras.getString(SessionActivity.SESSION_ID);
 
         sessionSettings = new SessionSettings(sessionID,getApplicationContext());
 
