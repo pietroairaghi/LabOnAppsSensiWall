@@ -82,4 +82,10 @@ public class SessionActivity extends AppCompatActivity {
 
     public void clickedbuttonDraw(View view) {
     }
+
+    public void clickedbuttonDisplay(View view) {
+        Intent intent = new Intent(this, DisplayActivity.class);
+        intent.putExtra(SESSION_ID, sessionID); // put the session ID to be read from test activty
+        startActivity(intent);
+    }
 }
