@@ -109,10 +109,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-
-
-    public void provaPietro_onClick(View view) {
-        Intent intent = new Intent(this, settingTestPietro.class);
-        startActivity(intent);
-    }
 }
