@@ -50,13 +50,6 @@
             android:layout_height="wrap_content"
             android:text="Start"
             android:onClick="startSession"/>
-
-        <Button
-            android:id="@+id/provaPietro"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Prova Pietro"
-            android:onClick="provaPietro_onClick"/>
     </LinearLayout>
     </ScrollView>
 
