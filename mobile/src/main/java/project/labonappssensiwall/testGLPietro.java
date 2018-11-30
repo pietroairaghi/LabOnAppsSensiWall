@@ -4,6 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class testGLPietro extends AppCompatActivity {
 
     private OpenGLView openGLView;
@@ -31,4 +34,5 @@ public class testGLPietro extends AppCompatActivity {
     public void dacciDentro(View view) {
         openGLView.changeCoso();
     }
+
 }

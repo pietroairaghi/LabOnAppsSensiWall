@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -32,6 +33,8 @@ public class DisplayActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String sessionID;
+    private List<Drawing> drawingsList= new ArrayList<>();
+
 
     private static final String TAG = "DisplayActivityAAA";
 
@@ -148,7 +151,7 @@ public class DisplayActivity extends AppCompatActivity {
         db.collection("sessions/"+sessionID+"/devices/jNjsPcCklbvh55hv9pdr/drawings")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
+                    public void onEvent(@Nullable QuerySnapshot snapshots,
                                         @Nullable FirebaseFirestoreException e) {
                         if (e != null) {
                             Log.w(TAG, "Listen failed.", e);
@@ -156,9 +159,44 @@ public class DisplayActivity extends AppCompatActivity {
                         }
 
                         // Update shapes
+                        for (DocumentChange dc : snapshots.getDocumentChanges()) {
 
-                        Toast toast = Toast.makeText(getApplicationContext(), "drawings updated", Toast.LENGTH_SHORT);
-                        toast.show();
+                            String ID = dc.getDocument().getId();
+                            String shape = dc.getDocument().get("shape").toString();
+                            float positionX = Float.parseFloat(dc.getDocument().get("positionx").toString());
+                            float positionY = Float.parseFloat(dc.getDocument().get("positiony").toString());
+                            float scale = Float.parseFloat(dc.getDocument().get("scale").toString());
+                            int division = Integer.parseInt(dc.getDocument().get("division").toString());
+                            String color = dc.getDocument().get("color").toString();
+
+                            Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, division, color);
+                            Toast toast = new Toast(getApplicationContext());
+
+                            switch (dc.getType()) {
+                                case ADDED:
+                                    // add the drawing to the list
+                                    drawingsList.add(tmp);
+
+
+                                    toast = Toast.makeText(getApplicationContext(), "added", Toast.LENGTH_SHORT);
+                                    //Log.d(TAG, "New city: " + dc.getDocument().getData());
+                                    break;
+                                case MODIFIED:
+
+                                    toast = Toast.makeText(getApplicationContext(), "modified", Toast.LENGTH_SHORT);
+                                    //Log.d(TAG, "Modified city: " + dc.getDocument().getData());
+                                    break;
+                                case REMOVED:
+                                    // remove the drawing from the list
+                                   drawingsList.remove(tmp);
+
+                                    toast = Toast.makeText(getApplicationContext(), "removed", Toast.LENGTH_SHORT);
+                                   // Log.d(TAG, "Removed city: " + dc.getDocument().getData());
+                                    break;
+                            }
+
+                            toast.show();
+                        }
 
                     }
                 });
