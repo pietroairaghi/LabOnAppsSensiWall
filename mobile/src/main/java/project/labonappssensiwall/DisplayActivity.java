@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -179,24 +180,29 @@ public class DisplayActivity extends AppCompatActivity {
 
 
                                     toast = Toast.makeText(getApplicationContext(), "added", Toast.LENGTH_SHORT);
-                                    //Log.d(TAG, "New city: " + dc.getDocument().getData());
+                                    Log.d(TAG, "added: " + tmp.getID());
                                     break;
                                 case MODIFIED:
 
                                     toast = Toast.makeText(getApplicationContext(), "modified", Toast.LENGTH_SHORT);
-                                    //Log.d(TAG, "Modified city: " + dc.getDocument().getData());
+                                    Log.d(TAG, "Modified: " + tmp.getID());
                                     break;
                                 case REMOVED:
                                     // remove the drawing from the list
                                    drawingsList.remove(tmp);
 
                                     toast = Toast.makeText(getApplicationContext(), "removed", Toast.LENGTH_SHORT);
-                                   // Log.d(TAG, "Removed city: " + dc.getDocument().getData());
+                                    Log.d(TAG, "Removed: " + tmp.getID());
                                     break;
                             }
 
                             toast.show();
                         }
+
+                       for(Drawing drawing : drawingsList){
+                           Log.d(TAG, "Coords: " + Arrays.toString(drawing.openGLCoords));
+                           Log.d(TAG, "Order: " + Arrays.toString(drawing.openGLOrder));
+                       }
 
                     }
                 });

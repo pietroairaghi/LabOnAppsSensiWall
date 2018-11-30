@@ -1,6 +1,13 @@
 package project.labonappssensiwall;
 
+import android.graphics.Color;
+import android.util.Log;
+
+import java.util.Arrays;
+
 public class Drawing {
+
+    private static final String TAG = "DisplayActivityAAA";
 
     private String ID;
     private String shape;
@@ -10,24 +17,56 @@ public class Drawing {
     private int division;
     private String color;
 
+    public float[] openGLCoords;
+    public short[] openGLOrder;          // Order to draw vertex
+    private float[] openGLColor = new float[4];
+
+
     public Drawing(String ID, String shape, float positionX, float positionY, float scale, int division, String color){
         this.ID = ID;
         this.shape = shape;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this. scale = scale;
+        this.positionX = positionX;         // x0
+        this.positionY = positionY;         // y0
+        this. scale = scale;                // radius
         this.division = division;
         this.color = color;
+
+        // set OpenGL parameters
+        setOpenGlParameters();
     }
 
     public String getID(){
         return ID;
     }
 
+    private void setOpenGlParameters(){
+
+        if(shape.equals("square")) {
+            this.openGLCoords = computePolygonCoords(positionX, positionY, scale, 4);
+            this.openGLOrder = computePolygonOrder(4);
+            this.openGLCoords = toOpenGlCoords(openGLCoords);
+
+            int col, r, g, b;
+            col = Color.parseColor(this.color);
+            r = Color.red(col);
+            g = Color.green(col);
+            b = Color.blue(col);
+
+            openGLColor[0] = r/255;
+            openGLColor[1] = g/255;
+            openGLColor[2] = b/255;
+            openGLColor[3] = 0.0f;
+
+            Log.d(TAG, "Color: " + Arrays.toString(openGLColor));
+
+        }
+    }
+
+
     // coords shift for OpenGL
     public float[] toOpenGlCoords(float[] coords) {
 
-        float[] coordsOpenGL = new float[coords.length/3];
+        float[] coordsOpenGL = new float[coords.length];
 
         for (int i = 0; i < coords.length/3; i++) {
             coordsOpenGL[i * 3] = coords[i * 3] * 2 - 1;
@@ -66,7 +105,7 @@ public class Drawing {
     }
 
     // polygons from triangles x0 = [0, 1], RADIUS = SCALE
-    public float[] computePolygonCoords(float x0, float y0, int radius, int nbrTriang){
+    public float[] computePolygonCoords(float x0, float y0, float radius, int nbrTriang){
 
         // Number of vertex
         int nbrVertex = nbrTriang + 1;
