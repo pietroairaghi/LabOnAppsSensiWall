@@ -265,13 +265,46 @@ public class TestActivity extends AppCompatActivity {
         toast.show();
     }
 
-    public void clickedbuttonCross(View view) {
-        selectedShape = "cross";
+    public void clickedbuttonTriangle(View view) {
+        selectedShape = "triangle";
 
         // Notify the selected item text
-        Toast toast = Toast.makeText(getApplicationContext(), "Selected color: " + selectedShape, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
         toast.show();
     }
+
+    public void clickedbuttonPentagon(View view) {
+        selectedShape = "pentagon";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void clickedbuttonHexagon(View view) {
+        selectedShape = "hexagon";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void clickedbuttonOctagon(View view) {
+        selectedShape = "octagon";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void clickedbuttonCircle(View view) {
+        selectedShape = "circle";
+
+        // Notify the selected item text
+        Toast toast = Toast.makeText(getApplicationContext(), "Selected shape: " + selectedShape, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
 
     private void setSeekBar(SeekBar seekBar) {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -385,4 +418,5 @@ public class TestActivity extends AppCompatActivity {
         });
 
     }
+
 }
