@@ -345,4 +345,44 @@ public class TestActivity extends AppCompatActivity {
                 });
 
     }
+
+    public void clickedbuttonClear(View view) {
+
+        // read database with doc ID, set screen and division spinners
+        CollectionReference drawings =  db.collection("sessions/"+sessionID+"/devices/jNjsPcCklbvh55hv9pdr/drawings");
+
+        // read documents
+        drawings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String drawingID = document.getId();
+
+                        // delete doc
+                        db.collection("sessions/"+sessionID+"/devices/jNjsPcCklbvh55hv9pdr/drawings").document(drawingID)
+                                .delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error deleting document", e);
+                                    }
+                                });
+
+
+                    }
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+            }
+        });
+
+    }
 }

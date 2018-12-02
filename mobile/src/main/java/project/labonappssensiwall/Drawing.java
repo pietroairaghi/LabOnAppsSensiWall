@@ -46,21 +46,28 @@ public class Drawing {
             this.openGLOrder = computePolygonOrder(4);
             this.openGLCoords = computeRotation(positionX, positionY, 45, openGLCoords);
             this.openGLCoords = toOpenGlCoords(openGLCoords);
-
-            int col, r, g, b;
-            col = Color.parseColor(this.color);
-            r = Color.red(col);
-            g = Color.green(col);
-            b = Color.blue(col);
-
-            openGLColor[0] = (float)r/255;
-            openGLColor[1] = (float)g/255;
-            openGLColor[2] = (float)b/255;
-            openGLColor[3] = 0.0f;
-
-            Log.d(TAG, "Color: " + Arrays.toString(openGLColor));
-
+        } else if (shape.equals("circle")) {
+            this.openGLCoords = computePolygonCoords(positionX, positionY, scale, 30);
+            this.openGLOrder = computePolygonOrder(30);
+            //this.openGLCoords = computeRotation(positionX, positionY, 45, openGLCoords);
+            this.openGLCoords = toOpenGlCoords(openGLCoords);
         }
+
+
+        // set color
+        int col, r, g, b;
+        col = Color.parseColor(this.color);
+        r = Color.red(col);
+        g = Color.green(col);
+        b = Color.blue(col);
+
+        openGLColor[0] = (float)r/255;
+        openGLColor[1] = (float)g/255;
+        openGLColor[2] = (float)b/255;
+        openGLColor[3] = 0.0f;
+
+        Log.d(TAG, "Color: " + Arrays.toString(openGLColor));
+
     }
 
 
