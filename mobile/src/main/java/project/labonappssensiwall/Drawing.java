@@ -17,8 +17,8 @@ public class Drawing {
     private int division;
     private String color;
 
-    public float[] openGLCoords;
-    public short[] openGLOrder;          // Order to draw vertex
+    private float[] openGLCoords;
+    private short[] openGLOrder;          // Order to draw vertex
     private float[] openGLColor = new float[4];
 
 
@@ -146,4 +146,15 @@ public class Drawing {
         return order;
     }
 
+    public float[] getOpenGLCoords() {
+        return openGLCoords;
+    }
+
+    public float[] getOpenGLColor() {
+        return openGLColor;
+    }
+
+    public short[] getOpenGLOrder() {
+        return openGLOrder;
+    }
 }

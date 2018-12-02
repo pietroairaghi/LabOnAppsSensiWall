@@ -2,24 +2,28 @@ package project.labonappssensiwall;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
-    private Triangle mTriangle;
-    private Square   mSquare;
+    private List<HashMap<String,Object>> shapes = new ArrayList();
 
-    public static boolean stocazzo;
+    private GeneralShape jacopo;
+
+    private boolean stocazzo = false;
+    private float[] coordsStocazzo;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        GLES20.glClearColor(1f,0,0,1f);
-        // initialize a triangle
-        mTriangle = new Triangle();
-        // initialize a square
-        mSquare = new Square();
+        GLES20.glClearColor(0,0,0,1f);
     }
 
     @Override
@@ -30,12 +34,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        if(stocazzo){
-            mTriangle.draw();
-        }else {
-            mTriangle.draw();
-            mSquare.draw();
-        }
+        drawList();
     }
 
     public static int loadShader(int type, String shaderCode){
@@ -51,10 +50,27 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         return shader;
     }
 
+    public void addDraw(){
 
-    public static void setStocazzo(){
-        stocazzo = !stocazzo;
     }
 
+    public void setJacopo(float[] coords){
+        stocazzo = true;
+        coordsStocazzo = coords;
+    }
+
+    public void setDrawingList(List<HashMap<String,Object>> shapes){
+        this.shapes = shapes;
+    }
+
+    public void drawList(){
+        for(HashMap<String,Object> shape : shapes){
+            float[] coords = (float[])shape.get("coords");
+            short[] order = (short[])shape.get("order");
+            float[] color = (float[])shape.get("color");
+            GeneralShape tmpShape = new GeneralShape(coords,order,color);
+            tmpShape.draw();
+        }
+    }
 
 }

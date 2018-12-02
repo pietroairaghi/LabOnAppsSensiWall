@@ -200,8 +200,8 @@ public class DisplayActivity extends AppCompatActivity {
                         }
 
                        for(Drawing drawing : drawingsList){
-                           Log.d(TAG, "Coords: " + Arrays.toString(drawing.openGLCoords));
-                           Log.d(TAG, "Order: " + Arrays.toString(drawing.openGLOrder));
+                           Log.d(TAG, "Coords: " + Arrays.toString(drawing.getOpenGLCoords()));
+                           Log.d(TAG, "Order: " + Arrays.toString(drawing.getOpenGLOrder()));
                        }
 
                     }

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class OpenGLView extends GLSurfaceView {
 
     private OpenGLRenderer mRenderer;
@@ -29,8 +32,13 @@ public class OpenGLView extends GLSurfaceView {
         //setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 
     }
-    public void changeCoso(){
-        mRenderer.setStocazzo();
+    public void changeCoso(List<HashMap<String,Object>> shapes){
+        mRenderer.setDrawingList(shapes);
+        requestRender();
+    }
+
+    public void setJacopone(float[] coords){
+        mRenderer.setJacopo(coords);
         requestRender();
     }
 

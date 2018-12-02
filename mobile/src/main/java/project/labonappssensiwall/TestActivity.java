@@ -320,9 +320,9 @@ public class TestActivity extends AppCompatActivity {
         newDrawing.put("shape", selectedShape);
         newDrawing.put("color", selectedColorHex);
         newDrawing.put("division", selectedDivision);
-        newDrawing.put("positionx", positionX);
-        newDrawing.put("positiony", positionY);
-        newDrawing.put("scale", scale);
+        newDrawing.put("positionx", (float)positionX/10);
+        newDrawing.put("positiony", (float)positionY/10);
+        newDrawing.put("scale", (float)scale/10);
 
 
         db.collection("sessions/"+sessionID+"/devices/"+selectedDevice+"/drawings").document()
