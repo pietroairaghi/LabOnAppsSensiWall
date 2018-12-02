@@ -2,7 +2,6 @@ package project.labonappssensiwall;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 
 import java.util.ArrayList;
@@ -14,12 +13,10 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
-    private List<HashMap<String,Object>> shapes = new ArrayList();
+    private List<HashMap<String,Object>> shapesData = new ArrayList();
+    private List<GeneralShape> shapes = new ArrayList();
 
-    private GeneralShape jacopo;
-
-    private boolean stocazzo = false;
-    private float[] coordsStocazzo;
+    private boolean updated = false;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -50,27 +47,27 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
         return shader;
     }
 
-    public void addDraw(){
-
-    }
-
-    public void setJacopo(float[] coords){
-        stocazzo = true;
-        coordsStocazzo = coords;
-    }
-
-    public void setDrawingList(List<HashMap<String,Object>> shapes){
-        this.shapes = shapes;
+    public void setDrawingList(List<HashMap<String,Object>> shapesData){
+        this.shapesData = shapesData;
+        updated = true;
     }
 
     public void drawList(){
-        for(HashMap<String,Object> shape : shapes){
-            float[] coords = (float[])shape.get("coords");
-            short[] order = (short[])shape.get("order");
-            float[] color = (float[])shape.get("color");
-            GeneralShape tmpShape = new GeneralShape(coords,order,color);
-            tmpShape.draw();
+        if(updated) {
+            shapes.clear();
+            for (HashMap<String, Object> shape : shapesData) {
+                float[] coords = (float[]) shape.get("coords");
+                short[] order = (short[]) shape.get("order");
+                float[] color = (float[]) shape.get("color");
+                shapes.add(new GeneralShape(coords, order, color));
+            }
         }
+        updated = false;
+
+        for (GeneralShape shape : shapes){
+            shape.draw();
+        }
+
     }
 
 }

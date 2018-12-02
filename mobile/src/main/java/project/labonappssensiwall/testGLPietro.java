@@ -28,7 +28,7 @@ public class testGLPietro extends AppCompatActivity {
 
         drawingHandler.setListener(new DrawingHandler.drawingHandlerListener() {
             @Override
-            public void onUpdate(String drawingID) {
+            public void onUpdate() {
                 dacciDentro();
             }
         });

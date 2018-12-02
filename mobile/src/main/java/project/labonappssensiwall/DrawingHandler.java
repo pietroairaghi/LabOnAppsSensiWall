@@ -33,7 +33,7 @@ public class DrawingHandler {
     }
 
     public interface drawingHandlerListener {
-        void onUpdate(String drawingID);
+        void onUpdate();
     }
 
     // Assign the listener implementing events interface that will receive the events
@@ -87,12 +87,12 @@ public class DrawingHandler {
                                     Log.d(TAG, "Removed: " + tmp.getID());
                                     break;
                             }
+                        }
 
-                            //TODO: magari spostare fuori dal for
-                            if (listener != null) {
-                                //listener.onSessionLoaded();
-                                listener.onUpdate(ID);
-                            }
+                        //TODO: magari spostare fuori dal for
+                        if (listener != null) {
+                            //listener.onSessionLoaded();
+                            listener.onUpdate();
                         }
                     }
                 });

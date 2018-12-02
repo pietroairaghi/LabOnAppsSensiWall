@@ -37,10 +37,5 @@ public class OpenGLView extends GLSurfaceView {
         requestRender();
     }
 
-    public void setJacopone(float[] coords){
-        mRenderer.setJacopo(coords);
-        requestRender();
-    }
-
 
 }

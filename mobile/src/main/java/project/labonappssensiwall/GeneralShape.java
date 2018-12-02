@@ -107,5 +107,8 @@ public class GeneralShape {
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(mPositionHandle);
+
+        final int[] buffersToDelete = new int[]{mPositionHandle};
+        GLES20.glDeleteBuffers(buffersToDelete.length, buffersToDelete, 0);
     }
 }

@@ -53,9 +53,9 @@ public class Drawing {
             g = Color.green(col);
             b = Color.blue(col);
 
-            openGLColor[0] = r/255;
-            openGLColor[1] = g/255;
-            openGLColor[2] = b/255;
+            openGLColor[0] = (float)r/255;
+            openGLColor[1] = (float)g/255;
+            openGLColor[2] = (float)b/255;
             openGLColor[3] = 0.0f;
 
             Log.d(TAG, "Color: " + Arrays.toString(openGLColor));
