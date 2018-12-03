@@ -39,19 +39,33 @@ public class Drawing {
         return ID;
     }
 
-    private void setOpenGlParameters(){
+    private void setOpenGlParameters() {
 
-        if(shape.equals("square")) {
-            this.openGLCoords = computePolygonCoords(positionX, positionY, scale, 4);
-            this.openGLOrder = computePolygonOrder(4);
-            this.openGLCoords = computeRotation(positionX, positionY, 45, openGLCoords);
-            this.openGLCoords = toOpenGlCoords(openGLCoords);
+        float angle = 0;
+        int nbrTriang = 0;
+
+        if (shape.equals("square")) {
+            nbrTriang = 4;
+            angle = 45;
+        } else if (shape.equals("triangle")) {
+            nbrTriang = 3;
+            angle = 90;
+        } else if (shape.equals("pentagon")) {
+            nbrTriang = 5;
+            angle = 18;
+        } else if (shape.equals("hexagon")) {
+            nbrTriang = 6;
+        } else if (shape.equals("octagon")) {
+            nbrTriang = 8;
         } else if (shape.equals("circle")) {
-            this.openGLCoords = computePolygonCoords(positionX, positionY, scale, 30);
-            this.openGLOrder = computePolygonOrder(30);
-            //this.openGLCoords = computeRotation(positionX, positionY, 45, openGLCoords);
-            this.openGLCoords = toOpenGlCoords(openGLCoords);
+            nbrTriang = 40;
         }
+
+        this.openGLCoords = computePolygonCoords(positionX, positionY, scale, nbrTriang);
+        this.openGLOrder = computePolygonOrder(nbrTriang);
+        if(angle != 0)
+            this.openGLCoords = computeRotation(positionX, positionY, angle, openGLCoords);
+        this.openGLCoords = toOpenGlCoords(openGLCoords);
 
 
         // set color
@@ -86,7 +100,7 @@ public class Drawing {
     }
 
     // rotation about x0, y0
-    public float[] computeRotation(float x0, float y0, int angle, float[] vertex){
+    public float[] computeRotation(float x0, float y0, float angle, float[] vertex){
 
         float[] rotVertex = new float[vertex.length];
         float angleRad = (float) Math.toRadians(angle);
@@ -100,7 +114,7 @@ public class Drawing {
 
             // rotate
             rotVertex[i * 3] =  (float)( vertex[i * 3] * Math.cos(angleRad) - vertex[i * 3 + 1] * Math.sin(angleRad) );
-            rotVertex[i * 3 + 1] =  (float)( vertex[i * 3 + 1] * Math.sin(angleRad) + vertex[i * 3] * Math.cos(angleRad) );
+            rotVertex[i * 3 + 1] =  (float)( vertex[i * 3] * Math.sin(angleRad) + vertex[i * 3 + 1] * Math.cos(angleRad) );
 
             // move to x0, y0
             rotVertex[i * 3] = rotVertex[i * 3] + x0;
