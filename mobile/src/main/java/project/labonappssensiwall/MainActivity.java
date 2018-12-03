@@ -4,13 +4,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String SESSION_NAME = "Session";
     public static final String SESSION_ID = "Session ID";
     private static final String TAG = "MainActivity";
+    private Device device;
 
 
     private RadioGroup sessionsRadioGroup;
@@ -33,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        device = new Device(this);
+        device.initDeviceFS();
 
         sessionsRadioGroup = findViewById(R.id.sessionRadioGroup);
 
@@ -44,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 refreshSessionList();
             }
         });
+
+        TextView tv1 = findViewById(R.id.textView2);
+        tv1.setText(device.getDeviceID());
 
 
     }
