@@ -26,12 +26,13 @@
         <activity android:name=".SessionActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".SessionSettingsActivity" />
-        <activity android:name=".testGLPietro"></activity>
+        <activity android:name=".testGLPietro" />
         <activity
             android:name=".DisplayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_display"
-            android:theme="@style/FullscreenTheme"></activity>
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".WallActivity"></activity>
     </application>
 
 </manifest>
