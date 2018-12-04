@@ -3,6 +3,7 @@ package project.labonappssensiwall;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -17,6 +18,9 @@ public class WallActivity extends AppCompatActivity {
     private String sessionID;
     private Device device;
 
+    public static float screenWidth;
+    public static float screenHeight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,10 @@ public class WallActivity extends AppCompatActivity {
 
         device = new Device(this);
         device.registerDeviceOnSession(sessionID);
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+         screenWidth = metrics.widthPixels;
+        screenHeight = metrics.heightPixels;
 
         openGLView = findViewById(R.id.openGLViewID);
         drawingHandler = new DrawingHandler(sessionID,device.getDeviceID());
@@ -103,6 +111,5 @@ public class WallActivity extends AppCompatActivity {
 
         openGLView.changeCoso(shapes);
     }
-
 
 }
