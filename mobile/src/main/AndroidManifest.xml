@@ -31,7 +31,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_display"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".WallActivity"></activity>
+        <activity android:name=".WallActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
