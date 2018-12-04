@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -22,6 +24,7 @@ import java.util.Map;
 public class SessionSettings {
 
     private String sessionID;
+    private String ownerID = "";
     private static final String TAG = "PietroActivity";
     private Map<String, HashMap<String,Object>> allSettings = new HashMap<>();
     private Map<String, List<HashMap<String,Object>>> settingsByCategory = new HashMap<>();
@@ -29,6 +32,7 @@ public class SessionSettings {
     private HashMap<String,String> sessionSettings = new HashMap<>();
     private FirebaseFirestore db;
     private boolean sessionSettingsLoaded = false; private boolean defaultSettingsLoaded = false;
+    private boolean sessionDataLoaded = false;
     private sessionSettingsListener listener;
     private Context applicationContext;
 
@@ -44,6 +48,7 @@ public class SessionSettings {
         db = FirebaseFirestore.getInstance();
 
         loadSessionSettings();
+        loadSessionData();
         loadDefaultSettings();
     }
 
@@ -62,7 +67,7 @@ public class SessionSettings {
     }
 
     protected void checkForOnComplete(){
-        if(sessionSettingsLoaded && defaultSettingsLoaded){
+        if(sessionSettingsLoaded && defaultSettingsLoaded && sessionDataLoaded){
             listener.onCompleteLoading();
         }
     }
@@ -125,6 +130,25 @@ public class SessionSettings {
         });
     }
 
+    private void loadSessionData() {
+        DocumentReference docRef = db.collection("sessions").document(sessionID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ownerID = document.getString("owner");
+                    }
+                }
+                sessionDataLoaded = true;
+                if (listener != null) {
+                    checkForOnComplete();
+                }
+            }
+        });
+    }
+
     public Object getSetting(String key){
         Object value = sessionSettings.get(key);
 
@@ -135,6 +159,10 @@ public class SessionSettings {
         value = allSettings.get(key).get("default value");
 
         return value;
+    }
+
+    public String getSessionName(){
+        return getString("sessionName");
     }
 
     public int getInt(String key){
@@ -201,6 +229,12 @@ public class SessionSettings {
                         }
                     }
                 });
+
+        if(key.equals("sessionName")){
+            db.collection("sessions").document(sessionID).update(
+                "name", value
+            );
+        }
 
     }
 }

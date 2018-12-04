@@ -2,4 +2,5 @@
 <resources>
     <item name="sessionID" type="id" />
     <item name="sessionName" type="id" />
+    <item name="ownerID" type="id" />
 </resources>

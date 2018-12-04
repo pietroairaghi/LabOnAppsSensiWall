@@ -27,6 +27,7 @@ public class SessionActivity extends AppCompatActivity {
     private static final String TAG = "SessionActivity";
 
     private String sessionID; // global to be send to other activities
+    private Device device;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +40,16 @@ public class SessionActivity extends AppCompatActivity {
         String sessionName = extras.getString(MainActivity.SESSION_NAME);
         sessionID = extras.getString(MainActivity.SESSION_ID);
 
+        device = new Device(this);
+        device.initDeviceFS();
+
         if(sessionID.equals("newSession")) {
+
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
             Map<String, Object> newSession = new HashMap<>();
             newSession.put("name", "New Session");
+            newSession.put("owner", device.getDeviceID());
 
             db.collection("sessions").document()
                     .set(newSession)
