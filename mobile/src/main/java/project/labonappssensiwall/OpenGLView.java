@@ -42,32 +42,4 @@ public class OpenGLView extends GLSurfaceView {
         requestRender();
     }
 
-   // private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
-    //private float mPreviousX;
-    //private float mPreviousY;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-
-        if(e.getAction() == e.ACTION_DOWN) {
-
-            float x = e.getX();
-            float y = e.getY();
-
-            float screenWidth = WallActivity.screenWidth;
-            float screenHeight = WallActivity.screenHeight;
-
-            float sceneX = (x / screenWidth) * 2.0f - 1.0f;
-            float sceneY = (y / screenHeight) * -2.0f + 1.0f; //if bottom is at -1. Otherwise same as X
-
-            // remove shape
-
-
-            Log.d("ontouch", sceneX + " " + sceneY);
-        }
-
-        return true;
-    }
-
-
 }

@@ -178,4 +178,16 @@ public class Drawing {
     public short[] getOpenGLOrder() {
         return openGLOrder;
     }
+
+    public float getPositionX0() {
+        return openGLCoords[0];
+    }
+
+    public float getPositionY0() {
+        return openGLCoords[1];
+    }
+
+    public float getScale(){
+        return scale;
+    }
 }

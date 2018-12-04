@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -41,7 +42,6 @@ public class WallActivity extends AppCompatActivity {
                 dacciDentro();
             }
         });
-
 
     }
 
@@ -107,5 +107,29 @@ public class WallActivity extends AppCompatActivity {
         openGLView.changeCoso(shapes);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+
+
+        if(e.getAction() == e.ACTION_DOWN) {
+
+            float x = e.getX();
+            float y = e.getY();
+
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            float screenWidth = metrics.widthPixels;
+            float screenHeight= metrics.heightPixels;
+
+            float sceneX = (x / screenWidth) * 2.0f - 1.0f;
+            float sceneY = (y / screenHeight) * -2.0f + 1.0f; //if bottom is at -1. Otherwise same as X
+
+            // remove shape
+            drawingHandler.deleteDrawingOnTouch(sceneX, sceneY);
+
+            //Log.d("ontouch", sceneX + " " + sceneY);
+        }
+
+        return true;
+    }
 
 }
