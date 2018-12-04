@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings.Secure;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -23,6 +25,7 @@ public class Device {
     private Context applicationContext;
     private SharedPreferences prefs;
     private String deviceID;
+    private String currentSession;
     private String name = "";
     private String type = "";
     private Boolean isOnFireStore = false;
@@ -92,5 +95,44 @@ public class Device {
 
     public String getDeviceID() {
         return deviceID;
+    }
+
+    public void registerDeviceOnSession(final String sessionID){
+        DocumentReference docRef = db.collection("sessions/"+sessionID+"/devices").document(deviceID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        currentSession = sessionID;
+                    } else {
+                        //insert device
+                        insertNewDeviceOnSession(sessionID);
+                    }
+                } else {
+                    //TODO: toast to notify connection error
+                }
+            }
+        });
+    }
+
+    private void insertNewDeviceOnSession(String sessionID){
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", this.name);
+        data.put("type",this.type);
+
+        db.collection("sessions/" + sessionID + "/devices").document(this.deviceID).set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e); //TODO: toast to notify error
+                    }
+                });
     }
 }
