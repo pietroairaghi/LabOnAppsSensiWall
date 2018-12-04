@@ -122,8 +122,8 @@ public class TestActivity extends AppCompatActivity {
 
     private void completeDevicesList(){
 
+        final int[] i = {1};
         for (String deviceID : listDevicesID){
-            final int[] i = {1};
             DocumentReference docRef = db.collection("devices").document(deviceID);
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
