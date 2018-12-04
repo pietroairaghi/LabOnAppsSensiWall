@@ -26,7 +26,6 @@
         <activity android:name=".SessionActivity" />
         <activity android:name=".TestActivity" />
         <activity android:name=".SessionSettingsActivity" />
-        <activity android:name=".testGLPietro" />
         <activity
             android:name=".DisplayActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
