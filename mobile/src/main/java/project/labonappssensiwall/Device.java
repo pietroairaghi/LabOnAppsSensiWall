@@ -14,8 +14,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -36,7 +39,7 @@ public class Device {
     public Device(Context applicationContext){
         this.applicationContext = applicationContext;
         prefs = applicationContext.getSharedPreferences(DEVICE_PREFS, MODE_PRIVATE);
-        lookForDeviceID();
+        updateDeviceInfo();
     }
 
     public void initDeviceFS() {
@@ -62,22 +65,22 @@ public class Device {
 
     private void addDeviceFS(){
         Map<String, Object> data = new HashMap<>();
-        data.put("name", "foo"); //TODO: aggiungiamo un nome?
-        data.put("type","smart phone"); //TODO: aggiungere gli altri tipi
+        name = tmpGetRandomName();
+        type = "smart phone";
+        data.put("name", name); //TODO: aggiungiamo un nome?
+        data.put("type",type); //TODO: aggiungere gli altri tipi
 
         db.collection("devices").document(deviceID).set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 isOnFireStore = true;
-                name = "foo";
-                type = "smart phone";
+                updateDeviceInfo(); //TODO: improve this...
             }
         });
-
     }
 
-    private void lookForDeviceID() {
+    public void updateDeviceInfo() {
         deviceID = prefs.getString("deviceID", null);
         if (deviceID == null) {
             // get device android ID
@@ -119,8 +122,6 @@ public class Device {
 
     private void insertNewDeviceOnSession(String sessionID){
         Map<String, Object> data = new HashMap<>();
-        data.put("name", this.name);
-        data.put("type",this.type);
 
         db.collection("sessions/" + sessionID + "/devices").document(this.deviceID).set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -134,5 +135,11 @@ public class Device {
                         Log.w(TAG, "Error writing document", e); //TODO: toast to notify error
                     }
                 });
+    }
+
+    private String tmpGetRandomName(){
+        List<String> names = Arrays.asList("Maragret Steves","Margurite Cokley","Markus Voigt","Mack Breslin","Daniella Trabert","Silvana Hinchman","Myron Orsborn","Royal Stufflebeam","Elwanda Sabine","Alysa Reneau","Genevive Reno","Bettie Olivarria","Carlo Sisneros","Estell Hanselman","Sook Carnegie","Arnita Galvin","Camellia Balderrama","Vertie Necaise","Elda Foard","Margret Gean","Shaniqua Flinchbaugh","Viola Turcotte","Galina Pruneda","Berneice Woldt","Adriene Whitman","Eryn Silsby","Kittie Ovalle","Yukiko Ledoux","Ike Farnham","Lamar Forshey","Tamar Heishman","Brittany Shehane","Janeen Deem","Delbert Rumore","Nakisha Sok","Dixie Redmond","Raleigh Cumbo","Caitlyn Spicer","Meghan Vanzandt","Lahoma Satterfield","Suzi Pfaff","Dorthy Stefanski","Marshall Treaster","Tamra Valez","Thalia Sidney","Dominica Newborn","Cedrick Kautz","Rachel Boughton","Malka Hayner","Sana Piccard");
+        Random rand = new Random();
+        return names.get(rand.nextInt(names.size()));
     }
 }

@@ -38,6 +38,7 @@ public class TestActivity extends AppCompatActivity {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private List<StringWithTag> listDevices = new ArrayList<>();
+    private List<String> listDevicesID = new ArrayList<>();
     private List<StringWithTag> listDivisions = new ArrayList<>();
 
     private String sessionID;
@@ -104,13 +105,11 @@ public class TestActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        String deviceName = document.get("name").toString();
                         String deviceID = document.getId();
-                        Log.d(TAG,deviceID + " - " + deviceName);
-                        listDevices.add(new StringWithTag(deviceName, deviceID));
+                        listDevicesID.add(deviceID);
                     }
 
-                    populateSpinnerDevices();
+                    completeDevicesList(); //TODO: better if there would be a join? dkn
 
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
@@ -119,6 +118,37 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void completeDevicesList(){
+
+        for (String deviceID : listDevicesID){
+            final int[] i = {1};
+            DocumentReference docRef = db.collection("devices").document(deviceID);
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            String deviceName = document.get("name").toString();
+                            String deviceID = document.getId();
+                            Log.d(TAG,deviceID + " - " + deviceName);
+                            listDevices.add(new StringWithTag(deviceName, deviceID));
+
+                            if(listDevicesID.size() <= i[0]){
+                                populateSpinnerDevices();
+                            }else{
+                                i[0]++;
+                            }
+
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+        }
     }
 
     private void populateSpinnerDevices(){

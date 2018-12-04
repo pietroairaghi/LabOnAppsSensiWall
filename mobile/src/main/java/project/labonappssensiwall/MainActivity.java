@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(SESSION_ID, sessionID);
             startActivity(intent);
         }else{
-            Intent intent = new Intent(this, DisplayActivity.class);
+            Intent intent = new Intent(this, WallActivity.class);
             intent.putExtra(SESSION_ID, sessionID);
             startActivity(intent);
         }

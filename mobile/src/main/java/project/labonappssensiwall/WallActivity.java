@@ -15,25 +15,29 @@ public class WallActivity extends AppCompatActivity {
     private DrawingHandler drawingHandler;
 
     private String sessionID;
+    private Device device;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wall);
 
+        // get intent with session id
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        sessionID = extras.getString(SessionActivity.SESSION_ID);
+
+        device = new Device(this);
+        device.registerDeviceOnSession(sessionID);
+
         openGLView = findViewById(R.id.openGLViewID);
-        drawingHandler = new DrawingHandler("q6DOpI3PtoiLOAYkA1kZ","jNjsPcCklbvh55hv9pdr");
+        drawingHandler = new DrawingHandler(sessionID,device.getDeviceID());
         drawingHandler.setListener(new DrawingHandler.drawingHandlerListener() {
             @Override
             public void onUpdate() {
                 dacciDentro();
             }
         });
-
-        // get intent with session id
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        sessionID = extras.getString(SessionActivity.SESSION_ID);
 
 
     }
