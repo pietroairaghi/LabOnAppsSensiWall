@@ -135,16 +135,14 @@ public class TestActivity extends AppCompatActivity {
                             String deviceID = document.getId();
                             Log.d(TAG,deviceID + " - " + deviceName);
                             listDevices.add(new StringWithTag(deviceName, deviceID));
-
-                            if(listDevicesID.size() <= i[0]){
-                                populateSpinnerDevices();
-                            }else{
-                                i[0]++;
-                            }
-
                         }
                     } else {
                         Log.d(TAG, "get failed with ", task.getException());
+                    }
+                    if(listDevicesID.size() <= i[0]){
+                        populateSpinnerDevices();
+                    }else{
+                        i[0]++;
                     }
                 }
             });
