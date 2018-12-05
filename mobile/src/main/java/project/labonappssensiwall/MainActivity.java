@@ -126,4 +126,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public void provaPietro(View view) {
+        Intent intent = new Intent(this, WearTestActivity.class);
+        startActivity(intent);
+    }
 }
