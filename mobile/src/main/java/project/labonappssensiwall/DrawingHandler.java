@@ -123,7 +123,7 @@ public class DrawingHandler {
             ID = entry.getKey();
             draw = entry.getValue();
 
-            if( Math.pow(x - draw.getPositionX0(), 2) + Math.pow(y - draw.getPositionY0(), 2) <= Math.pow(draw.getScale(), 2) ) {
+            if( Math.pow(x - draw.getPositionX0(), 2) + Math.pow(y - draw.getPositionY0(), 2) <= Math.pow(1.5*draw.getScale(), 2) ) {
 
                 db.collection("sessions/"+sessionID+"/devices/"+deviceID+"/drawings").document(ID)
                         .delete()
