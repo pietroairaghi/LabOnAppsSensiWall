@@ -43,6 +43,8 @@ public class WallActivity extends AppCompatActivity {
             }
         });
 
+        //drawingHandler.drawBackgoundDivisions();
+
     }
 
     @Override
@@ -106,6 +108,7 @@ public class WallActivity extends AppCompatActivity {
 
         openGLView.changeCoso(shapes);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {

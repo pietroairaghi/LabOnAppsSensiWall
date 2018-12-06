@@ -9,10 +9,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -51,8 +55,8 @@ public class DrawingHandler {
 
     private void addDrawingsRTU(){
 
-        db.collection("sessions/"+sessionID+"/devices/"+deviceID+"/drawings")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        CollectionReference collection = db.collection("sessions/"+sessionID+"/devices/"+deviceID+"/drawings");
+                collection.orderBy("timestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot snapshots,
                                         @Nullable FirebaseFirestoreException e) {
@@ -145,5 +149,63 @@ public class DrawingHandler {
         }
     }
 
+   /* public void drawBackgoundDivisions(){
+        // take division x, division y, divide de screen
+
+        DocumentReference docRef = db.collection("sessions").document(sessionID);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+
+                        int divisions = Integer.parseInt(document.getString("divisions"));
+
+                        String color = "#FFFFFF";
+
+                        float w = 1/divisions;
+                        float scale = (float) Math.pow(1/divisions, 2);
+
+                        // columns
+                        for(int i = 0; i < divisions; i++){
+
+                            // rows
+                            for(int j = 0; j < divisions; j++){
+
+                                float centerX = w/2 + j*w;
+                                float centerY = w/2 + i*w;
+
+                                Drawing division = new Drawing(centerX, centerY, scale, color);
+
+                                drawingsList.put("", division);
+
+                                if(color.equals("#FFFFFF")) {
+                                    color = "#696969";
+                                }
+
+                            }
+
+                        }
+
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        Log.d(TAG, "divisions: " + document.getString("divisions"));
+                    } else {
+
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+        if (listener != null) {
+            //listener.onSessionLoaded();
+            listener.onUpdate();
+        }
+
+    }
+*/
 
 }

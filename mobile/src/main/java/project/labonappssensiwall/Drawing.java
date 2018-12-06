@@ -35,6 +35,19 @@ public class Drawing {
         setOpenGlParameters();
     }
 
+    public Drawing(float positionX, float positionY, float scale, String color){
+        //this.ID = ID;
+        this.shape = "square";
+        this.positionX = positionX;         // x0
+        this.positionY = positionY;         // y0
+        this. scale = scale;                // radius
+        //this.division = division;
+        this.color = color;
+
+        // set OpenGL parameters
+        setOpenGlParameters();
+    }
+
     public String getID(){
         return ID;
     }

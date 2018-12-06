@@ -18,6 +18,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,9 +27,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class TestActivity extends AppCompatActivity {
 
@@ -377,6 +380,8 @@ public class TestActivity extends AppCompatActivity {
 
     public void clickedbuttonDraw(View view) {
 
+        long millis = new Date().getTime();
+
         Map<String, Object> newDrawing = new HashMap<>();
         newDrawing.put("shape", selectedShape);
         newDrawing.put("color", selectedColorHex);
@@ -384,6 +389,7 @@ public class TestActivity extends AppCompatActivity {
         newDrawing.put("positionx", (float)positionX/10);
         newDrawing.put("positiony", (float)positionY/10);
         newDrawing.put("scale", (float)scale/10);
+        newDrawing.put("timestamp",Long.toString(millis));
 
 
         db.collection("sessions/"+sessionID+"/devices/"+selectedDevice+"/drawings").document()
