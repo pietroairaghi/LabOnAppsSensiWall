@@ -31,6 +31,7 @@ allprojects {
                 example_path_asset : "/ ASSET ",
                 example_path_text   : "/TEXT",
                 example_path_datamap: "/DATAMAP",
+                start_draw_path_datamap: "/START_DRAW",
                 mainactivity        : "MainActivity",
                 drawactivity        : "DrawActivity",
                 sensoractivity      : "SensorActivity",

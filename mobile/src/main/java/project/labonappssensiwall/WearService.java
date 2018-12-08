@@ -58,6 +58,14 @@ public class WearService extends WearableListenerService {
                 if (message == null) message = "";
                 sendMessage(message, intent.getStringExtra(PATH));
                 break;
+            case START_DRAW:
+                putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_start_draw_path_datamap);
+                putDataMapRequest.getDataMap().putFloat("gX", intent.getFloatExtra("gX", 0f));
+                putDataMapRequest.getDataMap().putFloat("gY", intent.getFloatExtra("gY", 0f));
+                putDataMapRequest.getDataMap().putFloat("gZ", intent.getFloatExtra("gZ", 0f));
+                putDataMapRequest.getDataMap().putString("shape", intent.getStringExtra("shape"));
+                sendPutDataMapRequest(putDataMapRequest);
+                break;
             case EXAMPLE_DATAMAP:
                 putDataMapRequest = PutDataMapRequest.create(BuildConfig.W_example_path_datamap);
                 putDataMapRequest.getDataMap().putInt(BuildConfig.W_a_key, intent.getIntExtra(DATAMAP_INT, -1));
@@ -170,6 +178,22 @@ public class WearService extends WearableListenerService {
                         intent = new Intent("REPLACE_THIS_WITH_A_STRING_OF_ACTION_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY");
                         bitmapFromAsset(asset, intent, "REPLACE_THIS_WITH_A_STRING_OF_IMAGE_PREFERABLY_DEFINED_AS_A_CONSTANT_IN_TARGET_ACTIVITY");
                         break;
+                    case BuildConfig.W_start_draw_path_datamap:
+                        Log.v(TAG, "iniziato start draw from wearable");
+
+                        // Extract the data behind the key you know contains data
+                        float gX = dataMapItem.getDataMap().getFloat("gX");
+                        float gY = dataMapItem.getDataMap().getFloat("gY");
+                        float gZ = dataMapItem.getDataMap().getFloat("gZ");
+                        String shape = dataMapItem.getDataMap().getString("shape");
+
+                        intent = new Intent("STARTDRAW");
+                        intent.putExtra("gX", gX);
+                        intent.putExtra("gY", gY);
+                        intent.putExtra("gZ", gZ);
+                        intent.putExtra("shape", shape);
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                        break;
                     case BuildConfig.W_example_path_datamap:
                         // Extract the data behind the key you know contains data
                         int integer = dataMapItem.getDataMap().getInt(BuildConfig.W_a_key);
@@ -228,6 +252,9 @@ public class WearService extends WearableListenerService {
                 break;
             case BuildConfig.W_path_acknowledge:
                 Log.v(TAG, "Received acknowledgment");
+                break;
+            case BuildConfig.W_start_draw_path_datamap:
+                Log.v(TAG, "Bella! Message contained text. Return a datamap for start draw");
                 break;
             case BuildConfig.W_example_path_text:
                 Log.v(TAG, "Message contained text. Return a datamap for demo purpose");
@@ -335,6 +362,6 @@ public class WearService extends WearableListenerService {
 
     // Constants
     public enum ACTION_SEND {
-        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, PROFILE_SEND
+        STARTACTIVITY, MESSAGE, EXAMPLE_DATAMAP, EXAMPLE_ASSET, PROFILE_SEND, START_DRAW
     }
 }

@@ -10,21 +10,32 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:onClick="inviaDatoEx"
         android:text="prova"
         app:layout_constraintTop_toBottomOf="@+id/button2"
-        tools:layout_editor_absoluteX="116dp" />
+        tools:layout_editor_absoluteX="16dp" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="86dp"
-        android:layout_marginLeft="86dp"
-        android:layout_marginTop="94dp"
+        android:layout_marginStart="136dp"
+        android:layout_marginLeft="136dp"
+        android:layout_marginTop="188dp"
         android:onClick="inviaDatoEx2"
         android:text="prova2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewRes"
+        android:layout_width="290dp"
+        android:layout_height="142dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="40dp"
+        android:text="wait..."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
