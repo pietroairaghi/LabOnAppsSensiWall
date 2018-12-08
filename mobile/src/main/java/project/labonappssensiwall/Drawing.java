@@ -15,6 +15,8 @@ public class Drawing {
     private float positionY;
     private float scale;
     private int division;
+    private float z_index;
+    private float original_z;
     private String color;
 
     private float[] openGLCoords;
@@ -22,7 +24,7 @@ public class Drawing {
     private float[] openGLColor = new float[4];
 
 
-    public Drawing(String ID, String shape, float positionX, float positionY, float scale, int division, String color){
+    public Drawing(String ID, String shape, float positionX, float positionY, float scale, int division, String color, long z_index){
         this.ID = ID;
         this.shape = shape;
         this.positionX = positionX;         // x0
@@ -31,18 +33,23 @@ public class Drawing {
         this.division = division;
         this.color = color;
 
+        //z_index = z_index % 100000;
+        this.z_index =  z_index;
+        this.original_z = z_index;
+
         // set OpenGL parameters
         setOpenGlParameters();
     }
 
-    public Drawing(float positionX, float positionY, float scale, String color){
-        //this.ID = ID;
+    public Drawing(String ID, float positionX, float positionY, float scale, String color){
+        this.ID = ID;
         this.shape = "square";
         this.positionX = positionX;         // x0
         this.positionY = positionY;         // y0
         this. scale = scale;                // radius
         //this.division = division;
         this.color = color;
+        this.z_index = -1.0f;
 
         // set OpenGL parameters
         setOpenGlParameters();
@@ -106,7 +113,7 @@ public class Drawing {
         for (int i = 0; i < coords.length/3; i++) {
             coordsOpenGL[i * 3] = coords[i * 3] * 2 - 1;
             coordsOpenGL[i * 3 + 1] = coords[i * 3 + 1] * 2 - 1;
-            coordsOpenGL[i * 3 + 2] = (float) 0.0;
+            coordsOpenGL[i * 3 + 2] =  z_index;
         }
 
         return coordsOpenGL;
@@ -123,7 +130,7 @@ public class Drawing {
             // move to origin
             vertex[i * 3] = vertex[i * 3] - x0;
             vertex[i * 3 + 1] = vertex[i * 3 + 1] - y0;
-            vertex[i * 3 + 2] = (float) 0.0;
+            vertex[i * 3 + 2] = z_index;
 
             // rotate
             rotVertex[i * 3] =  (float)( vertex[i * 3] * Math.cos(angleRad) - vertex[i * 3 + 1] * Math.sin(angleRad) );
@@ -132,7 +139,7 @@ public class Drawing {
             // move to x0, y0
             rotVertex[i * 3] = rotVertex[i * 3] + x0;
             rotVertex[i * 3 + 1] = rotVertex[i * 3 + 1] + y0;
-            rotVertex[i * 3 + 2] = (float) 0.0;
+            rotVertex[i * 3 + 2] =  z_index;
 
         }
 
@@ -150,12 +157,12 @@ public class Drawing {
         // add origin
         vertex[0] = x0;
         vertex[1] = y0;
-        vertex[2] = (float) 0.0;
+        vertex[2] = z_index;
 
         for(int i = 1; i < nbrVertex; i++) {
             vertex[i * 3] = (float) (x0 + radius*Math.cos(angle*i));        // x
             vertex[i * 3 + 1] = (float) (y0 + radius*Math.sin(angle*i));    // y
-            vertex[i * 3 + 2] = (float) 0.0;                                // z
+            vertex[i * 3 + 2] = z_index;                                // z
         }
 
         return vertex;
@@ -202,5 +209,23 @@ public class Drawing {
 
     public float getScale(){
         return scale;
+    }
+
+    public void normalizeZindex(float i) {
+
+        //Log.d(TAG, "prima index: " + z_index);
+        if (z_index == -1){
+            return;
+        }
+
+        //z_index = this.original_z/max;
+        z_index = i;
+
+        // set OpenGL parameters
+        setOpenGlParameters();
+    }
+
+    public float getZ_index() {
+        return z_index;
     }
 }

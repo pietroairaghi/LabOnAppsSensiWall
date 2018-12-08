@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class WallActivity extends AppCompatActivity {
 
@@ -96,16 +97,34 @@ public class WallActivity extends AppCompatActivity {
 
     public void dacciDentro() {
         HashMap<Long,String> drawingOrders = drawingHandler.getDrawingOrders();
+        //Set<Long> keys = drawingOrders.keySet();
+
+        List<Long> keyList = new ArrayList(drawingOrders.keySet());
+       // List<String> valueList = new ArrayList(drawingOrders.values());
+
+        long max = keyList.get(keyList.size()-1);
+        int totalSize = keyList.size();
+
+        float i = -0.9f;
 
         List<HashMap<String,Object>> shapes = new ArrayList<>();
         for (String drawingID : drawingOrders.values()){
-            Log.d("handlerTAG",drawingID);
+           // Log.d("handlerTAG",drawingID);
             Drawing drawing = drawingHandler.getDrawing(drawingID);
+            drawing.normalizeZindex(i);
+            float zindexnorm = drawing.getZ_index();
+
+
+            //Log.d("DisplayActivityAAA", "index max: " + max);
+           // Log.d("DisplayActivityAAA", "index dopo norm: " + zindexnorm);
+
             HashMap<String,Object> currentDrawing = new HashMap<>();
             currentDrawing.put("coords",drawing.getOpenGLCoords());
             currentDrawing.put("order",drawing.getOpenGLOrder());
             currentDrawing.put("color",drawing.getOpenGLColor());
             shapes.add(currentDrawing);
+
+            i += (float)1/totalSize;
         }
 
         openGLView.changeCoso(shapes);

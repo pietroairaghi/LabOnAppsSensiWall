@@ -85,11 +85,11 @@ public class DrawingHandler {
                             float positionX = Float.parseFloat(dc.getDocument().get("positionx").toString());
                             float positionY = Float.parseFloat(dc.getDocument().get("positiony").toString());
                             float scale = Float.parseFloat(dc.getDocument().get("scale").toString());
-                            int division = Integer.parseInt(dc.getDocument().get("division").toString());
+                            int division =  Integer.parseInt(dc.getDocument().get("division").toString());
                             long order = Long.parseLong(dc.getDocument().get("timestamp").toString());
                             String color = dc.getDocument().get("color").toString();
 
-                    Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, division, color);
+                    Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, division, color, order);
 
                             switch (dc.getType()) {
                                 case ADDED:
@@ -178,7 +178,10 @@ public class DrawingHandler {
 
         int divisions = settings.getInt("divisions");
 
-        String color = "#FF0000";
+        String color1 = "#000000";
+        String color2 = "#282828";
+
+        String color = color1;
 
         float w = (float) 1 / divisions;
         float scale =  w/(float)Math.sqrt(2);
@@ -192,28 +195,30 @@ public class DrawingHandler {
                 float centerX = w / 2 + j * w;
                 float centerY = w / 2 + i * w;
 
-                Drawing division = new Drawing(centerX, centerY, scale, color);
-
                 String ID = Integer.toString(j) + Integer.toString(i);
-                drawingsList.put(ID, division);
 
-                if (color.equals("#FF0000")) {
-                    color = "#696969";
-                } else if (color.equals("#696969")) {
-                    color = "#FF0000";
+                Drawing division = new Drawing(ID, centerX, centerY, scale, color);
+
+                drawingsList.put(ID, division);
+                drawingOrders.put(Long.parseLong(ID),ID);
+
+                if (color.equals(color1)) {
+                    color = color2;
+                } else if (color.equals(color2)) {
+                    color = color1;
                 }
 
 
-                Log.d(TAG, "centerX: " + centerX);
-                Log.d(TAG, "centerY: " + centerY);
+                //Log.d(TAG, "centerX: " + centerX);
+                Log.d(TAG, "ID: " + ID);
 
             }
 
             if(divisions % 2 == 0)
-                if (color.equals("#FF0000")) {
-                    color = "#696969";
-                } else if (color.equals("#696969")) {
-                    color = "#FF0000";
+                if (color.equals(color1)) {
+                    color = color2;
+                } else if (color.equals(color2)) {
+                    color = color1;
                 }
 
         }
