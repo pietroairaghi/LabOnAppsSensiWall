@@ -22,6 +22,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         GLES20.glClearColor(0,0,0,1f);
+        GLES20.glClearDepthf(-1.0f);
     }
 
     @Override
@@ -31,8 +32,13 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glDepthFunc(GLES20.GL_NEVER);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+
+        GLES20.glDepthFunc(GLES20.GL_GEQUAL);
+        //GLES20.glCullFace(GLES20.GL_BACK);
+        //GLES20.glEnable(GLES20.GL_CULL_FACE);
+
         drawList();
     }
 

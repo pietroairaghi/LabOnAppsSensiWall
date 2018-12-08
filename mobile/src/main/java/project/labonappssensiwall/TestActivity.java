@@ -49,7 +49,8 @@ public class TestActivity extends AppCompatActivity {
 
     // Selected variables for new drawing (used when push button DRAW)
     private String selectedDevice;
-    private int selectedDivision;
+    private int selectedDivisionX;
+    private int selectedDivisionY;
     private String selectedColorHex;
     private String selectedShape;
     private int positionX, positionY, scale;
@@ -194,13 +195,15 @@ public class TestActivity extends AppCompatActivity {
         }
 
         // Create new spinner for division selection
-        Spinner spinnerDivisions = findViewById(R.id.spinnerDivisions);
+        Spinner spinnerDivisionsX = findViewById(R.id.spinnerDivisionsX);
+        Spinner spinnerDivisionsY = findViewById(R.id.spinnerDivisionsY);
         ArrayAdapter<StringWithTag> adapter = new ArrayAdapter<> (getApplicationContext(), android.R.layout.simple_spinner_item, listDivisions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDivisions.setAdapter(adapter);
+        spinnerDivisionsX.setAdapter(adapter);
+        spinnerDivisionsY.setAdapter(adapter);
 
         // Set on select functions
-        spinnerDivisions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerDivisionsX.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -209,7 +212,29 @@ public class TestActivity extends AppCompatActivity {
                 String string = s.string;
 
                 // Set selected for drawing
-                selectedDivision = Integer.parseInt(tag);
+                selectedDivisionX = Integer.parseInt(tag);
+
+                // Notify the selected item text
+                Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+ tag, Toast.LENGTH_SHORT);
+                //toast.show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //
+            }
+        });
+
+        spinnerDivisionsY.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                StringWithTag s = (StringWithTag) parent.getItemAtPosition(position);
+                String tag = s.tag;
+                String string = s.string;
+
+                // Set selected for drawing
+                selectedDivisionY = Integer.parseInt(tag);
 
                 // Notify the selected item text
                 Toast toast = Toast.makeText(getApplicationContext(), "Selected : " + string + ", ID: "+ tag, Toast.LENGTH_SHORT);
@@ -385,7 +410,8 @@ public class TestActivity extends AppCompatActivity {
         Map<String, Object> newDrawing = new HashMap<>();
         newDrawing.put("shape", selectedShape);
         newDrawing.put("color", selectedColorHex);
-        newDrawing.put("division", selectedDivision);
+        newDrawing.put("divisionx", selectedDivisionX);
+        newDrawing.put("divisiony", selectedDivisionY);
         newDrawing.put("positionx", (float)positionX/10);
         newDrawing.put("positiony", (float)positionY/10);
         newDrawing.put("scale", (float)scale/10);
