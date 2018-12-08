@@ -14,7 +14,8 @@ public class Drawing {
     private float positionX;
     private float positionY;
     private float scale;
-    private int division;
+    private int divisionX;
+    private int divisionY;
     private float z_index;
     private float original_z;
     private String color;
@@ -24,13 +25,15 @@ public class Drawing {
     private float[] openGLColor = new float[4];
 
 
-    public Drawing(String ID, String shape, float positionX, float positionY, float scale, int division, String color, long z_index){
+    public Drawing(String ID, String shape, float positionX, float positionY, float scale, int divisionX, int divisionY, String color, long z_index, int divisions){
+
         this.ID = ID;
         this.shape = shape;
-        this.positionX = positionX;         // x0
-        this.positionY = positionY;         // y0
-        this. scale = scale;                // radius
-        this.division = division;
+        this.positionX = positionX/divisions + (float)(divisionX-1)/divisions;         // x0
+        this.positionY = positionY/divisions + (float)(divisionY-1)/divisions;         // y0
+        this. scale = scale/(2*divisions);                // radius
+        this.divisionX = divisionX;
+        this.divisionY = divisionY;
         this.color = color;
 
         //z_index = z_index % 100000;

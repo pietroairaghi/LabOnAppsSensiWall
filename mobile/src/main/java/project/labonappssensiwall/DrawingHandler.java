@@ -48,11 +48,12 @@ public class DrawingHandler {
             @Override
             public void onCompleteLoading() {
                 drawBackgoundDivisions();
+                // add drawings real time update
+                addDrawingsRTU();
             }
         });
 
-        // add drawings real time update
-        addDrawingsRTU();
+
     }
 
     public interface drawingHandlerListener {
@@ -84,12 +85,14 @@ public class DrawingHandler {
                             String shape = dc.getDocument().get("shape").toString();
                             float positionX = Float.parseFloat(dc.getDocument().get("positionx").toString());
                             float positionY = Float.parseFloat(dc.getDocument().get("positiony").toString());
+                            int divisionX = Integer.parseInt(dc.getDocument().get("divisionx").toString());
+                            int divisionY = Integer.parseInt(dc.getDocument().get("divisiony").toString());
                             float scale = Float.parseFloat(dc.getDocument().get("scale").toString());
-                            int division =  Integer.parseInt(dc.getDocument().get("division").toString());
+                          //  int division =  Integer.parseInt(dc.getDocument().get("division").toString());
                             long order = Long.parseLong(dc.getDocument().get("timestamp").toString());
                             String color = dc.getDocument().get("color").toString();
 
-                    Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, division, color, order);
+                    Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, divisionX, divisionY, color, order, settings.getInt("divisions"));
 
                             switch (dc.getType()) {
                                 case ADDED:

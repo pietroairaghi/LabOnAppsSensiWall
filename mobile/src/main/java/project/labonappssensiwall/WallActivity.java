@@ -102,7 +102,7 @@ public class WallActivity extends AppCompatActivity {
         List<Long> keyList = new ArrayList(drawingOrders.keySet());
        // List<String> valueList = new ArrayList(drawingOrders.values());
 
-        long max = keyList.get(keyList.size()-1);
+     //   long max = keyList.get(keyList.size()-1);
         int totalSize = keyList.size();
 
         float i = -0.9f;

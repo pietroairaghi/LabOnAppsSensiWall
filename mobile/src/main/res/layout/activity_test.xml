@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Screen #"
+                    android:text="Device"
                     android:textSize="24sp" />
 
                 <Spinner
@@ -52,11 +52,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Division #"
+                    android:text="Division X"
                     android:textSize="24sp" />
 
                 <Spinner
-                    android:id="@+id/spinnerDivisions"
+                    android:id="@+id/spinnerDivisionsX"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView3333"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Division Y"
+                    android:textSize="24sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerDivisionsY"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
@@ -280,6 +301,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:min="0"
                     android:max="10" />
             </LinearLayout>
 
@@ -325,6 +347,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:min="1" 
                     android:max="10" />
             </LinearLayout>
 
