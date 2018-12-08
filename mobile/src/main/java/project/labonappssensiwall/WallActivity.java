@@ -12,6 +12,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WallActivity extends AppCompatActivity {
 
@@ -94,9 +95,12 @@ public class WallActivity extends AppCompatActivity {
     }
 
     public void dacciDentro() {
-        HashMap<String,Drawing> drawingList = drawingHandler.getDrawingsList();
+        HashMap<Long,String> drawingOrders = drawingHandler.getDrawingOrders();
+
         List<HashMap<String,Object>> shapes = new ArrayList<>();
-        for (Drawing drawing : drawingList.values()) {
+        for (String drawingID : drawingOrders.values()){
+            Log.d("handlerTAG",drawingID);
+            Drawing drawing = drawingHandler.getDrawing(drawingID);
             HashMap<String,Object> currentDrawing = new HashMap<>();
             currentDrawing.put("coords",drawing.getOpenGLCoords());
             currentDrawing.put("order",drawing.getOpenGLOrder());
