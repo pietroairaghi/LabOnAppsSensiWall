@@ -43,8 +43,6 @@ public class WallActivity extends AppCompatActivity {
             }
         });
 
-        //drawingHandler.drawBackgoundDivisions();
-
     }
 
     @Override
