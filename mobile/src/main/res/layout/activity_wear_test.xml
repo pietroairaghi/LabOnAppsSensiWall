@@ -7,10 +7,24 @@
     tools:context=".WearTestActivity">
 
     <Button
-        android:id="@+id/bellaButton"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bella li"
-        tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="129dp" />
+        android:layout_marginTop="60dp"
+        android:onClick="inviaDatoEx"
+        android:text="prova"
+        app:layout_constraintTop_toBottomOf="@+id/button2"
+        tools:layout_editor_absoluteX="116dp" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="86dp"
+        android:layout_marginLeft="86dp"
+        android:layout_marginTop="94dp"
+        android:onClick="inviaDatoEx2"
+        android:text="prova2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

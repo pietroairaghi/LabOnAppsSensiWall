@@ -12,7 +12,7 @@
         android:layout_height="37dp"
         android:layout_marginTop="66dp"
         android:gravity="center"
-        android:text="waiting for phone.."
+        android:text="drawing"
         android:textColor="@color/card_default_background"
         app:layout_constraintEnd_toEndOf="@+id/imageButton"
         app:layout_constraintStart_toStartOf="@+id/imageButton"
@@ -24,9 +24,9 @@
         android:layout_height="83dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="36dp"
-        android:layout_marginRight="36dp"
         android:background="@null"
-        android:src="@drawable/ic_more_horiz_24dp_wht"
+        android:onClick="sendDraw"
+        android:src="@drawable/common_full_open_on_phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/wearTextView" />
 
