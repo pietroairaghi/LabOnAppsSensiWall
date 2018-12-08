@@ -40,7 +40,6 @@ public class WearService extends WearableListenerService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        Log.d(TAG,"startCommand");
 
         // If no action defined, return
         if (intent.getAction() == null) return START_NOT_STICKY;
@@ -106,8 +105,6 @@ public class WearService extends WearableListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        Log.d(TAG,"onCreate");
     }
 
     private static Bitmap resizeImage(Bitmap bitmap, int newSize) {
@@ -215,7 +212,16 @@ public class WearService extends WearableListenerService {
                 Intent startIntent = null;
                 switch (data) {
                     case BuildConfig.W_mainactivity:
+                        Log.v(TAG, "Started main activity");
                         startIntent = new Intent(this, MainActivity.class);
+                        break;
+                    case BuildConfig.W_drawactivity:
+                        Log.v(TAG, "Started draw activity");
+                        startIntent = new Intent(this, DrawActivity.class);
+                        break;
+                    case BuildConfig.W_sensoractivity:
+                        Log.v(TAG, "Started sensor activity");
+                        startIntent = new Intent(this, SensorActivity.class);
                         break;
                 }
 
@@ -264,7 +270,6 @@ public class WearService extends WearableListenerService {
 
     private void sendMessage(String message, String path) {
         // Send message to ALL connected nodes
-        Log.d(TAG,"questo path: " + path);
         sendMessageToNodes(message, path);
     }
 
