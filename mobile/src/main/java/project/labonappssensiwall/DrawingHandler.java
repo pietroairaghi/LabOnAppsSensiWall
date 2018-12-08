@@ -1,24 +1,16 @@
 package project.labonappssensiwall;
 
-import android.se.omapi.Session;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
@@ -32,8 +24,8 @@ public class DrawingHandler {
     private String deviceID;
     private SessionSettings settings;
 
-    private HashMap<String,Drawing> drawingsList= new HashMap<>();
-    private HashMap<Long,String> drawingOrders = new HashMap();
+    private HashMap<String, Drawing> drawingsList = new HashMap<>();
+    private HashMap<Long, String> drawingOrders = new HashMap();
 
     private static final String TAG = "handlerTAG";
 
@@ -68,51 +60,51 @@ public class DrawingHandler {
 
     private void addDrawingsRTU() {
 
-        CollectionReference collection = db.collection("sessions/"+sessionID+"/devices/"+deviceID+"/drawings");
-                collection.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot snapshots,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
+        CollectionReference collection = db.collection("sessions/" + sessionID + "/devices/" + deviceID + "/drawings");
+        collection.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
 
                 // Update shapes
                 for (DocumentChange dc : snapshots.getDocumentChanges()) {
 
-                            String ID = dc.getDocument().getId();
-                            String shape = dc.getDocument().get("shape").toString();
-                            float positionX = Float.parseFloat(dc.getDocument().get("positionx").toString());
-                            float positionY = Float.parseFloat(dc.getDocument().get("positiony").toString());
-                            int divisionX = Integer.parseInt(dc.getDocument().get("divisionx").toString());
-                            int divisionY = Integer.parseInt(dc.getDocument().get("divisiony").toString());
-                            float scale = Float.parseFloat(dc.getDocument().get("scale").toString());
-                          //  int division =  Integer.parseInt(dc.getDocument().get("division").toString());
-                            long order = Long.parseLong(dc.getDocument().get("timestamp").toString());
-                            String color = dc.getDocument().get("color").toString();
+                    String ID = dc.getDocument().getId();
+                    String shape = dc.getDocument().get("shape").toString();
+                    float positionX = Float.parseFloat(dc.getDocument().get("positionx").toString());
+                    float positionY = Float.parseFloat(dc.getDocument().get("positiony").toString());
+                    int divisionX = Integer.parseInt(dc.getDocument().get("divisionx").toString());
+                    int divisionY = Integer.parseInt(dc.getDocument().get("divisiony").toString());
+                    float scale = Float.parseFloat(dc.getDocument().get("scale").toString());
+                    //  int division =  Integer.parseInt(dc.getDocument().get("division").toString());
+                    long order = Long.parseLong(dc.getDocument().get("timestamp").toString());
+                    String color = dc.getDocument().get("color").toString();
 
                     Drawing tmp = new Drawing(ID, shape, positionX, positionY, scale, divisionX, divisionY, color, order, settings.getInt("divisions"));
 
-                            switch (dc.getType()) {
-                                case ADDED:
-                                    // add the drawing to the list
-                                    drawingsList.put(ID,tmp);
-                                    drawingOrders.put(order,ID);
+                    switch (dc.getType()) {
+                        case ADDED:
+                            // add the drawing to the list
+                            drawingsList.put(ID, tmp);
+                            drawingOrders.put(order, ID);
 
-                                    Log.d(TAG, "added: " + tmp.getID());
-                                    break;
-                                case MODIFIED:
-                                    // modify the drawing to the list
-                                    drawingsList.put(ID,tmp);
-                                    drawingOrders.put(order,ID);
+                            Log.d(TAG, "added: " + tmp.getID());
+                            break;
+                        case MODIFIED:
+                            // modify the drawing to the list
+                            drawingsList.put(ID, tmp);
+                            drawingOrders.put(order, ID);
 
-                                    Log.d(TAG, "Modified: " + tmp.getID());
-                                    break;
-                                case REMOVED:
-                                    // remove the drawing from the list
-                                    drawingsList.remove(ID);
-                                    drawingOrders.remove(order);
+                            Log.d(TAG, "Modified: " + tmp.getID());
+                            break;
+                        case REMOVED:
+                            // remove the drawing from the list
+                            drawingsList.remove(ID);
+                            drawingOrders.remove(order);
 
                             Log.d(TAG, "Removed: " + tmp.getID());
                             break;
@@ -187,7 +179,7 @@ public class DrawingHandler {
         String color = color1;
 
         float w = (float) 1 / divisions;
-        float scale =  w/(float)Math.sqrt(2);
+        float scale = w / (float) Math.sqrt(2);
 
         // columns
         for (int i = 0; i < divisions; i++) {
@@ -203,7 +195,7 @@ public class DrawingHandler {
                 Drawing division = new Drawing(ID, centerX, centerY, scale, color);
 
                 drawingsList.put(ID, division);
-                drawingOrders.put(Long.parseLong(ID),ID);
+                drawingOrders.put(Long.parseLong(ID), ID);
 
                 if (color.equals(color1)) {
                     color = color2;
@@ -217,7 +209,7 @@ public class DrawingHandler {
 
             }
 
-            if(divisions % 2 == 0)
+            if (divisions % 2 == 0)
                 if (color.equals(color1)) {
                     color = color2;
                 } else if (color.equals(color2)) {
