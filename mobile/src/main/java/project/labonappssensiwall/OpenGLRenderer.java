@@ -2,6 +2,7 @@ package project.labonappssensiwall;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class OpenGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glDepthFunc(GLES20.GL_NEVER);
         drawList();
     }
 
