@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LabOnAppsSensiWall</string>
+    <string name="app_name">SensiApp</string>
 
     <!-- Strings related to Settings -->
 
@@ -73,17 +73,6 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
-    <!-- Spinner TestActivity -->
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-    </string-array>
 
     <string name="title_activity_display">DisplayActivity</string>
     <string name="dummy_button">Dummy Button</string>
