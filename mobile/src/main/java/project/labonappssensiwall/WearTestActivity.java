@@ -32,14 +32,27 @@ public class WearTestActivity extends AppCompatActivity {
                 float gZ = intent.getFloatExtra("gZ",0f);
                 String shape = intent.getStringExtra("shape");
 
-                double coordY = (Math.acos(gZ/9.81f) + Math.PI/2)/(2*Math.PI);
+                float signY = (gX / Math.abs(gX));
+                float signX = (gY / Math.abs(gY));
+
+                double coordY = (Math.acos((9.81f - gZ)/9.81f * signY) - Math.PI/2)/(Math.PI/2);
+                double coordX = (Math.asin(gY/9.81f)/(Math.PI/2))*(-1);
+
+                if(Double.isNaN(coordY)){
+                    coordY = -1*signY;
+                }
+
+                if(Double.isNaN(coordX)){
+                    coordX = -1*signX;
+                }
 
 
                 textView.setText("coords: gX " + Float.toString(gX)
                         + " gY " + Float.toString(gY)
                         + " gZ " + Float.toString(gZ)
                         + " shape: " + shape
-                        + " coordY: " + Double.toString(coordY));
+                        + " coordY: " + Double.toString(coordY)
+                        + " coordX: " + Double.toString(coordX));
 
             }
         }, new IntentFilter("STARTDRAW"));
