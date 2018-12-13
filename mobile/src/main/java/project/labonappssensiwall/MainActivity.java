@@ -47,6 +47,16 @@ public class MainActivity extends AppCompatActivity {
         device = new Device(this);
         device.initDeviceFS();
 
+        device.setListener(new Device.deviceListener(){
+            @Override
+            public void onCompleteLoading() {
+                initMain();
+            }
+        });
+
+    }
+
+    private void initMain(){
         sessionsRadioGroup = findViewById(R.id.sessionRadioGroup);
 
         refreshSessionList();
@@ -64,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
         // TODO: listener
         TextView selectSessionLabel = findViewById(R.id.selectSessionLabel);
         selectSessionLabel.setText("Welcome back " + device.getName() + "!\n Please, select a session:");
-
-
     }
 
     private void addRadioButtonToGroup(String text, String sessionName, String sessionID,String ownerID) {

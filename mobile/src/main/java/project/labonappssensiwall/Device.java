@@ -38,6 +38,7 @@ public class Device {
     private Boolean isOnFireStore = false;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String TAG = "PietroActivity";
+    private deviceListener listener;
 
 
     public Device(Context applicationContext){
@@ -67,6 +68,15 @@ public class Device {
         });
     }
 
+    public interface deviceListener {
+        void onCompleteLoading();
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setListener(deviceListener listener) {
+        this.listener = listener;
+    }
+
     private void addDeviceFS(){
         Map<String, Object> data = new HashMap<>();
         name = tmpGetRandomName();
@@ -80,6 +90,11 @@ public class Device {
             public void onSuccess(Void aVoid) {
                 isOnFireStore = true;
                 updateDeviceInfo(); //TODO: improve this...
+
+                if (listener != null) {
+                    //listener.onSessionLoaded();
+                    listener.onCompleteLoading();
+                }
             }
         });
     }
@@ -98,6 +113,10 @@ public class Device {
         editor.putString("type", type);
         editor.putString("deviceID", deviceID);
         editor.apply();
+        if (listener != null) {
+            //listener.onSessionLoaded();
+            listener.onCompleteLoading();
+        }
     }
 
     public String getDeviceID() {
