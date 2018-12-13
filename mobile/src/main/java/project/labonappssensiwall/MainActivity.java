@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         String sessionID = radioButton.getTag(R.id.sessionID).toString();
         String ownerID = radioButton.getTag(R.id.ownerID).toString();
 
-        if(ownerID.equals(device.getDeviceID())){
+        if(ownerID.equals(device.getDeviceID()) || sessionID.equals("newSession")){
             Intent intent = new Intent(this, SessionActivity.class);
             intent.putExtra(SESSION_NAME, sessionName);
             intent.putExtra(SESSION_ID, sessionID);

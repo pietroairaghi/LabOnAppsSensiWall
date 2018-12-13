@@ -145,6 +145,7 @@ public class SmartWatchActivity extends AppCompatActivity {
                 positionX = (float)(coordX+1)/2;
                 positionY = (float)(coordY+1)/2;
 
+                startDraw();
 
 
             }
@@ -366,7 +367,7 @@ public class SmartWatchActivity extends AppCompatActivity {
     }
 
 
-    public void startDraw(View view) {
+    public void startDraw() {
 
         long millis = new Date().getTime();
 
