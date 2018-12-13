@@ -40,7 +40,7 @@ public class WearService extends WearableListenerService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        Log.d(TAG,"startCommand");
+        Log.d(TAG, "startCommand");
 
         // If no action defined, return
         if (intent.getAction() == null) return START_NOT_STICKY;
@@ -115,7 +115,7 @@ public class WearService extends WearableListenerService {
     public void onCreate() {
         super.onCreate();
 
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
     }
 
     private static Bitmap resizeImage(Bitmap bitmap, int newSize) {
@@ -291,7 +291,7 @@ public class WearService extends WearableListenerService {
 
     private void sendMessage(String message, String path) {
         // Send message to ALL connected nodes
-        Log.d(TAG,"questo path: " + path);
+        Log.d(TAG, "questo path: " + path);
         sendMessageToNodes(message, path);
     }
 
@@ -302,15 +302,19 @@ public class WearService extends WearableListenerService {
             Wearable.getNodeClient(this).getConnectedNodes().addOnCompleteListener(new OnCompleteListener<List<Node>>() {
                 @Override
                 public void onComplete(@NonNull Task<List<Node>> listTask) {
-                    List<Node> nodes = listTask.getResult();
-                    for (Node node : nodes) {
-                        Log.v(TAG, "Try to send message to a specific node");
-                        WearService.this.sendMessage(message, path, node.getId());
+                    try {
+                        List<Node> nodes = listTask.getResult();
+                        for (Node node : nodes) {
+                            Log.v(TAG, "Try to send message to a specific node");
+                            WearService.this.sendMessage(message, path, node.getId());
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "no smart watch connected");
                     }
                 }
             });
-        }catch (Exception e){
-            Log.w(TAG,"no smart watch connected");
+        } catch (Exception e) {
+            Log.w(TAG, "no smart watch connected");
         }
     }
 
