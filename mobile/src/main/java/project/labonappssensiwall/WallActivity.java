@@ -167,10 +167,6 @@ public class WallActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent e) {
 
         if (e.getAction() == e.ACTION_DOWN) {
-
-            if(simonGame.isPlaying){
-                simonGame.touched();
-            }else {
                 float x = e.getX();
                 float y = e.getY();
 
@@ -185,7 +181,6 @@ public class WallActivity extends AppCompatActivity {
                 drawingHandler.deleteDrawingOnTouch(sceneX, sceneY);
 
                 //Log.d("ontouch", sceneX + " " + sceneY);
-            }
         }
 
         return true;
