@@ -104,6 +104,8 @@ public class Device {
         return deviceID;
     }
 
+    public String getName() { return name; }
+
     public void registerDeviceOnSession(final String sessionID){
         DocumentReference docRef = db.collection("sessions/"+sessionID+"/devices").document(deviceID);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

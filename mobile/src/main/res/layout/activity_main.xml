@@ -5,65 +5,87 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
-        <Space
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50px" />
+            android:layout_height="match_parent"
+            android:divider="?android:dividerHorizontal"
+            android:orientation="vertical"
+            android:showDividers="middle">
 
-        <TextView
-            android:id="@+id/selectSessionLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Select session"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="700px">
-
-            <RadioGroup
-                android:id="@+id/sessionRadioGroup"
+            <TextView
+                android:id="@+id/selectSessionLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:orientation="vertical">
-            </RadioGroup>
-        </ScrollView>
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Select session"
+                android:textSize="24sp"
+                tools:padding="16dp"
+                tools:textColor="#FF0000" />
 
-        <Button
-            android:id="@+id/btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Search sessions"/>
 
-        <Button
-            android:id="@+id/startSession"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start"
-            android:onClick="startSession"/>
-        <Button
-            android:id="@+id/provaPietro"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="provaWatch"
-            android:onClick="provaPietro"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Device id: " />
+                <RadioGroup
+                    android:id="@+id/sessionRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:divider="?android:dividerHorizontal"
+                    android:orientation="vertical"
+                    android:showDividers="middle"></RadioGroup>
 
-    </LinearLayout>
+            </ScrollView>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_margin="8dp">
+
+                <Button
+                    android:id="@+id/btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Update list" />
+
+                <Button
+                    android:id="@+id/startSession"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="startSession"
+                    android:text="Start" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Device id: " />
+
+        </LinearLayout>
+
     </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

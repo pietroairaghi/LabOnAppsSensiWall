@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -51,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         TextView tv1 = findViewById(R.id.textView2);
         tv1.setText(device.getDeviceID());
 
+        // TODO: listener
+        TextView selectSessionLabel = findViewById(R.id.selectSessionLabel);
+        selectSessionLabel.setText("Welcome back " + device.getName() + "!\n Please, select a session:");
+
 
     }
 
@@ -67,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         if(ownerID.equals(device.getDeviceID())){
             button.setTypeface(null,Typeface.BOLD);
         }
+
+        RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(20, 20, 20, 20);
+        button.setLayoutParams(params);
+
         sessionsRadioGroup.addView(button);
     }
 
@@ -125,10 +135,5 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-    }
-
-    public void provaPietro(View view) {
-        Intent intent = new Intent(this, WearTestActivity.class);
-        startActivity(intent);
     }
 }
