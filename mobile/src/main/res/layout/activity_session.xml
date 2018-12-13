@@ -6,53 +6,71 @@
     android:layout_height="match_parent"
     tools:context=".SessionActivity">
 
-    <LinearLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
-        <TextView
-            android:id="@+id/sessionName"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Welcome to session ... !"
-            android:textSize="30sp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:showDividers="middle">
 
-        <Button
-            android:id="@+id/buttonSettings"
-            android:onClick="clickedbuttonSetting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Settings" />
+            <TextView
+                android:id="@+id/sessionName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="Welcome to session..."
+                android:textSize="24sp"
+                tools:padding="16dp"
+                tools:textColor="#FF0000" />
 
-        <Button
-            android:id="@+id/buttonTest"
-            android:onClick="clickedbuttonTest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Test functions" />
+            <Button
+                android:id="@+id/buttonSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:onClick="clickedbuttonSetting"
+                android:text="Settings" />
 
-        <Button
-            android:id="@+id/buttonStart"
-            android:onClick="clickedbuttonStart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Game" />
+            <Button
+                android:id="@+id/buttonTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:onClick="clickedbuttonTest"
+                android:text="Test functions" />
 
-        <Button
-            android:id="@+id/buttonDraw"
-            android:onClick="clickedbuttonDraw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Draw with smartwatch" />
+            <Button
+                android:id="@+id/buttonStart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:onClick="clickedbuttonStart"
+                android:text="Start Game" />
 
-        <Button
-            android:id="@+id/buttonDisplay"
-            android:onClick="clickedbuttonDisplay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Display session" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/buttonDraw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:onClick="clickedbuttonDraw"
+                android:text="Draw with smartwatch" />
+
+            <Button
+                android:id="@+id/buttonDisplay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:onClick="clickedbuttonDisplay"
+                android:text="Display session" />
+        </LinearLayout>
+
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

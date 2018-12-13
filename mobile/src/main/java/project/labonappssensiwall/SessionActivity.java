@@ -68,7 +68,7 @@ public class SessionActivity extends AppCompatActivity {
         }
 
         TextView session = findViewById(R.id.sessionName);
-        session.setText("Welcome to " + sessionName + "!");
+        session.setText("Welcome to session \n" + sessionName + "!");
     }
 
     public void clickedbuttonSetting(View view) {
