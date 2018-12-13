@@ -1,8 +1,10 @@
 package project.labonappssensiwall;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaCodec;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +31,7 @@ public class SessionActivity extends AppCompatActivity {
 
     public static String SESSION_ID = "Session ID";
     private static final String TAG = "SessionActivity";
+    private  FirebaseFirestore db;
 
     private String sessionID; // global to be send to other activities
     private Device device;
@@ -37,6 +40,12 @@ public class SessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
@@ -49,9 +58,9 @@ public class SessionActivity extends AppCompatActivity {
 
         device.registerDeviceOnSession(sessionID);
 
-        if(sessionID.equals("newSession")) {
+        db = FirebaseFirestore.getInstance();
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if(sessionID.equals("newSession")) {
 
             Map<String, Object> newSession = new HashMap<>();
             newSession.put("name", "New Session");
@@ -76,6 +85,47 @@ public class SessionActivity extends AppCompatActivity {
 
         TextView session = findViewById(R.id.sessionName);
         session.setText("Welcome to session \n" + sessionName + "!");
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                SessionActivity.this);
+
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // remove device from db
+                db.collection("sessions/"+sessionID+"/devices").document(device.getDeviceID())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error deleting document", e);
+                            }
+                        });
+
+                // finish app
+                finish();
+            }
+        });
+
+        alertDialog.setNegativeButton("No", null);
+
+        alertDialog.setMessage("Do you want to exit the session?");
+        alertDialog.setTitle("Session");
+        alertDialog.show();
     }
 
     @Override
