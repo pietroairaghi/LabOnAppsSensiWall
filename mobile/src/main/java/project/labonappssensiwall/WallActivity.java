@@ -198,9 +198,8 @@ public class WallActivity extends AppCompatActivity {
         });
 
         alertDialog.setNegativeButton("No", null);
-
-        alertDialog.setMessage("Do you want to exit the session?");
-        alertDialog.setTitle("Session");
+        alertDialog.setMessage("Do you want to exit?");
+        alertDialog.setTitle("Display session");
         alertDialog.show();
     }
 
