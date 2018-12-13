@@ -226,4 +226,9 @@ public class DrawingHandler {
 
     }
 
+    public void addDrawingToList(Drawing drawing, long order,String ID){
+        drawingsList.put(ID, drawing);
+        drawingOrders.put(order, ID);
+    }
+
 }

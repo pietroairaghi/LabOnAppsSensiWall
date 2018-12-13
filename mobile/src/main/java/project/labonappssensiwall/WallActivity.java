@@ -7,7 +7,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,8 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class WallActivity extends AppCompatActivity {
 
@@ -44,6 +41,7 @@ public class WallActivity extends AppCompatActivity {
         // get intent with session id
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
         sessionID = extras.getString(SessionActivity.SESSION_ID);
 
         device = new Device(this);
@@ -54,18 +52,34 @@ public class WallActivity extends AppCompatActivity {
         drawingHandler.setListener(new DrawingHandler.drawingHandlerListener() {
             @Override
             public void onUpdate() {
-                dacciDentro();
+                triggerOpenGLView();
             }
         });
 
         simonGame = new SimonGame(device.getDeviceID(),sessionID);
 
-        simonGame.setListener(new SimonGame.gameListener() {
-            @Override
-            public void onDrawRequest() {
-                Log.d("qualcosa","qualcosina");
-            }
-        });
+        if (true || intent.hasExtra("simonGame")) { //TODO: chose when trigger simon game
+            simonGame.isPlaying = true;
+
+            simonGame.setListener(new SimonGame.gameListener() {
+                @Override
+                public void onDrawRequest(boolean active) {
+                    String color = simonGame.getColor();
+                    if(!active){
+                        color = "#FFFFFF";
+                    }
+                    Drawing draw = new Drawing("bgr", 0.5f, 0.5f, 1, color);
+                    drawingHandler.addDrawingToList(draw,1,"bgr");
+                    triggerOpenGLView();
+                }
+
+                @Override
+                public void thereWeGo() {
+                    simonGame.startGame();
+                }
+            });
+        }
+
 
     }
 
@@ -104,7 +118,7 @@ public class WallActivity extends AppCompatActivity {
         openGLView.onPause();
     }
 
-    public void dacciDentro() {
+    public void triggerOpenGLView() {
         HashMap<Long, String> drawingOrders = drawingHandler.getDrawingOrders();
         //Set<Long> keys = drawingOrders.keySet();
 
@@ -143,23 +157,26 @@ public class WallActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
 
-
         if (e.getAction() == e.ACTION_DOWN) {
 
-            float x = e.getX();
-            float y = e.getY();
+            if(simonGame.isPlaying){
+                simonGame.touched();
+            }else {
+                float x = e.getX();
+                float y = e.getY();
 
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            float screenWidth = metrics.widthPixels;
-            float screenHeight = metrics.heightPixels;
+                DisplayMetrics metrics = getResources().getDisplayMetrics();
+                float screenWidth = metrics.widthPixels;
+                float screenHeight = metrics.heightPixels;
 
-            float sceneX = (x / screenWidth) * 2.0f - 1.0f;
-            float sceneY = (y / screenHeight) * -2.0f + 1.0f; //if bottom is at -1. Otherwise same as X
+                float sceneX = (x / screenWidth) * 2.0f - 1.0f;
+                float sceneY = (y / screenHeight) * -2.0f + 1.0f; //if bottom is at -1. Otherwise same as X
 
-            // remove shape
-            drawingHandler.deleteDrawingOnTouch(sceneX, sceneY);
+                // remove shape
+                drawingHandler.deleteDrawingOnTouch(sceneX, sceneY);
 
-            //Log.d("ontouch", sceneX + " " + sceneY);
+                //Log.d("ontouch", sceneX + " " + sceneY);
+            }
         }
 
         return true;

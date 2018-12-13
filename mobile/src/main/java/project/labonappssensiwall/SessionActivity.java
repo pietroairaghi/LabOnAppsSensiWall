@@ -40,11 +40,6 @@ public class SessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_session);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
 
         // Get the Intent that started this activity and extract the string
@@ -85,6 +80,11 @@ public class SessionActivity extends AppCompatActivity {
 
         TextView session = findViewById(R.id.sessionName);
         session.setText("Welcome to session \n" + sessionName + "!");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
     }
@@ -161,6 +161,7 @@ public class SessionActivity extends AppCompatActivity {
     public void clickedbuttonStart(View view) {
         Intent intent = new Intent(this, WallActivity.class);
         intent.putExtra(SESSION_ID, sessionID); // put the session ID to be read from test activty
+        intent.putExtra("simonGame", true); // put the session ID to be read from test activty
         startActivity(intent);
     }
 
