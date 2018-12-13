@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         device = new Device(this);
         device.initDeviceFS();
 
@@ -53,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 initMain();
             }
         });
-
     }
+
 
     private void initMain(){
         sessionsRadioGroup = findViewById(R.id.sessionRadioGroup);
