@@ -442,7 +442,7 @@ public class TestActivity extends AppCompatActivity {
     public void clickedbuttonClear(View view) {
 
         // read database with doc ID, set screen and division spinners
-        CollectionReference drawings =  db.collection("sessions/"+sessionID+"/devices/jNjsPcCklbvh55hv9pdr/drawings");
+        CollectionReference drawings =  db.collection("sessions/"+sessionID+"/devices/"+selectedDevice+"/drawings");
 
         // read documents
         drawings.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -450,10 +450,7 @@ public class TestActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        String drawingID = document.getId();
-
-                        // delete doc
-                        db.collection("sessions/"+sessionID+"/devices/jNjsPcCklbvh55hv9pdr/drawings").document(drawingID)
+                        document.getReference()
                                 .delete()
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -467,8 +464,6 @@ public class TestActivity extends AppCompatActivity {
                                         Log.w(TAG, "Error deleting document", e);
                                     }
                                 });
-
-
                     }
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
