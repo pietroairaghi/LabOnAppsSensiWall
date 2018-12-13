@@ -79,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
     private void addRadioButtonToGroup(String text, String sessionName, String sessionID,String ownerID) {
         final int nButtons = sessionsRadioGroup.getChildCount();
 
+        if (text == null){
+            text = "new session";
+        }
+
         RadioButton button;
         button = new RadioButton(getApplicationContext());
         button.setId(nButtons+1);
