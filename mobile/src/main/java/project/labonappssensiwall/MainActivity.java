@@ -135,11 +135,8 @@ public class MainActivity extends AppCompatActivity {
             final String sessionID = (String) session.getKey();
             DocumentReference docRef = db.collection("sessions/"+sessionID+"/settings").document("sessionName");
 
-            // Source can be CACHE, SERVER, or DEFAULT.
-            Source source = Source.CACHE;
-
-            // Get the document, forcing the SDK to use the offline cache
-            docRef.get(source).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            // Get the document, forcing the SDK to use the default cache
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if (task.isSuccessful()) {
