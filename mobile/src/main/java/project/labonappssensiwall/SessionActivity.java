@@ -47,6 +47,8 @@ public class SessionActivity extends AppCompatActivity {
         device = new Device(this);
         device.initDeviceFS();
 
+        device.registerDeviceOnSession(sessionID);
+
         if(sessionID.equals("newSession")) {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
