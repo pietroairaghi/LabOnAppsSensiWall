@@ -19,6 +19,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +39,14 @@ public class SimonGame {
     private String color;
     private List<String> sequence = new ArrayList<>();
     public boolean isPlaying = false;
+    public boolean isLauncher = false;
     public int nTouch = 1;
 
-    public SimonGame(String deviceID, String sessionID) {
+    public SimonGame(String deviceID, String sessionID,boolean isLauncher) {
         this.deviceID = deviceID;
         this.sessionID = sessionID;
         this.color = getRandomColor();
+        this.isLauncher = isLauncher;
 
         registerOnGame();
         addGameRTU();
@@ -137,7 +140,9 @@ public class SimonGame {
                 .set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                getSessionDevices();
+                if(isLauncher) {
+                    getSessionDevices();
+                }
             }
         });
     }
@@ -270,5 +275,28 @@ public class SimonGame {
 
     public void triggerDraw() {
         drawMe();
+    }
+
+    public void waitForStart(){
+        // Listen for metadata changes to the document.
+        final DocumentReference docRef = db.collection("sessions/" + sessionID + "/simonGame").document("gameInfo");
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    String sequenceString = snapshot.getString("sequence");
+                    List<String> items = Arrays.asList(sequenceString.split("\\s*,\\s*"));
+                    sequence = items;
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
     }
 }

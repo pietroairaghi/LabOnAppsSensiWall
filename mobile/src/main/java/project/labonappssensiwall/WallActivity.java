@@ -57,11 +57,12 @@ public class WallActivity extends AppCompatActivity {
             }
         });
 
-        simonGame = new SimonGame(device.getDeviceID(),sessionID);
 
         if (intent.hasExtra("simonGame")) { //TODO: chose better when trigger simon game
             simonLauncher = true;
         }
+
+        simonGame = new SimonGame(device.getDeviceID(),sessionID,simonLauncher);
         simonGame.isPlaying = true;
 
         simonGame.setListener(new SimonGame.gameListener() {
