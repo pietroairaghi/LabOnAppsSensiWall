@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
@@ -15,17 +16,25 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String SESSION_NAME = "Session";
     public static final String SESSION_ID = "Session ID";
     public static final String OWNER_ID = "Owner ID";
+    private HashMap<String,HashMap<String,String>> sessionsList = new HashMap<>();
     private static final String TAG = "MainActivity";
     private Device device;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
     private RadioGroup sessionsRadioGroup;
@@ -83,14 +92,13 @@ public class MainActivity extends AppCompatActivity {
     private void removeCurrentSessions(){
         sessionsRadioGroup.clearCheck();
         sessionsRadioGroup.removeAllViews();
+        sessionsList.clear();
     }
 
 
     public void refreshSessionList() {
         removeCurrentSessions();
         addRadioButtonToGroup("Create new session...","newSession","newSession","");
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         CollectionReference sessions =  db.collection("sessions");
 
@@ -99,17 +107,57 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
+                        HashMap<String,String> currentDocument = new HashMap<>();
+
                         String sessionID = document.getId();
-                        String sessionName = document.getString("name");
                         String ownerID = document.getString("owner");
-                        addRadioButtonToGroup(sessionName,sessionName,sessionID,ownerID);
+
+                        currentDocument.put("sessionID",sessionID);
+                        currentDocument.put("ownerID",ownerID);
+
+                        sessionsList.put(sessionID,currentDocument);
+
                     }
+                    completeSessionList();
                 } else {
                     Toast toast = Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }
         });
+    }
+
+    public void completeSessionList(){
+
+        for (Map.Entry session : sessionsList.entrySet()) {
+            HashMap<String,String> currentDocument = (HashMap<String, String>) session.getValue();
+            final String ownerID = currentDocument.get("ownerID");
+            final String sessionID = (String) session.getKey();
+            DocumentReference docRef = db.collection("sessions/"+sessionID+"/settings").document("sessionName");
+
+            // Source can be CACHE, SERVER, or DEFAULT.
+            Source source = Source.CACHE;
+
+            // Get the document, forcing the SDK to use the offline cache
+            docRef.get(source).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        // Document found in the offline cache
+                        DocumentSnapshot document = task.getResult();
+                        String sessionName = document.getString("value");
+                        addRadioButtonToGroup(sessionName,sessionName,sessionID,ownerID);
+                    } else {
+                        String sessionName = "unknownSession";
+                        addRadioButtonToGroup(sessionName,sessionName,sessionID,ownerID);
+                    }
+                }
+            });
+
+        }
+
+
+
     }
 
     public void startSession(View view){
