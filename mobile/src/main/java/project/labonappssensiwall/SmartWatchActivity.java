@@ -44,6 +44,7 @@ public class SmartWatchActivity extends AppCompatActivity {
     private List<StringWithTag> listDevices = new ArrayList<>();
     private List<String> listDevicesID = new ArrayList<>();
     private List<StringWithTag> listDivisions = new ArrayList<>();
+    private BroadcastReceiver bcReceiver;
 
     private String sessionID;
     private SessionSettings settings;
@@ -98,6 +99,12 @@ public class SmartWatchActivity extends AppCompatActivity {
         setSeekBar(seekBarScale);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(bcReceiver);
+    }
+
     private void startSmartWatch(){
         Intent intentWear = new Intent(this,WearService.class);
         intentWear.setAction(WearService.ACTION_SEND.STARTACTIVITY.name());
@@ -109,7 +116,7 @@ public class SmartWatchActivity extends AppCompatActivity {
     }
 
     private void setSmartWatchListener(){
-        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+        bcReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 TextView textView = findViewById(R.id.textViewRes);
@@ -149,7 +156,9 @@ public class SmartWatchActivity extends AppCompatActivity {
 
 
             }
-        }, new IntentFilter("STARTDRAW"));
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(bcReceiver, new IntentFilter("STARTDRAW"));
     }
 
     private void getSessionDevices() {
