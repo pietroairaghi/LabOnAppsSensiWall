@@ -23,21 +23,13 @@
                 android:id="@+id/sessionName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="32dp"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
                 android:text="Welcome to session..."
                 android:textSize="24sp"
                 tools:padding="16dp"
                 tools:textColor="#FF0000" />
-
-            <Button
-                android:id="@+id/buttonSettings"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:onClick="clickedbuttonSetting"
-                android:text="Settings" />
 
             <Button
                 android:id="@+id/buttonTest"
