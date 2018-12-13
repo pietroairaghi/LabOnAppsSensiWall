@@ -26,6 +26,7 @@ public class WallActivity extends AppCompatActivity {
     private OpenGLView openGLView;
     private DrawingHandler drawingHandler;
     private SimonGame simonGame;
+    private boolean simonLauncher = false;
     private FirebaseFirestore db;
 
     private String sessionID;
@@ -58,27 +59,30 @@ public class WallActivity extends AppCompatActivity {
 
         simonGame = new SimonGame(device.getDeviceID(),sessionID);
 
-        if (true || intent.hasExtra("simonGame")) { //TODO: chose when trigger simon game
-            simonGame.isPlaying = true;
+        if (intent.hasExtra("simonGame")) { //TODO: chose better when trigger simon game
+            simonLauncher = true;
+        }
+        simonGame.isPlaying = true;
 
-            simonGame.setListener(new SimonGame.gameListener() {
-                @Override
-                public void onDrawRequest(boolean active) {
-                    String color = simonGame.getColor();
-                    if(!active){
-                        color = "#FFFFFF";
-                    }
-                    Drawing draw = new Drawing("bgr", 0.5f, 0.5f, 1, color);
-                    drawingHandler.addDrawingToList(draw,1,"bgr");
-                    triggerOpenGLView();
+        simonGame.setListener(new SimonGame.gameListener() {
+            @Override
+            public void onDrawRequest(boolean active) {
+                String color = simonGame.getColor();
+                if(!active){
+                    color = "#FFFFFF";
                 }
+                Drawing draw = new Drawing("bgr", 0.5f, 0.5f, 1, color);
+                drawingHandler.addDrawingToList(draw,1,"bgr");
+                triggerOpenGLView();
+            }
 
-                @Override
-                public void thereWeGo() {
+            @Override
+            public void thereWeGo() {
+                if(simonLauncher) {
                     simonGame.startGame();
                 }
-            });
-        }
+            }
+        });
 
 
     }

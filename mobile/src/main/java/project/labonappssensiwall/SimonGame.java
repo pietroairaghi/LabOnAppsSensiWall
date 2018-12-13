@@ -56,7 +56,7 @@ public class SimonGame {
     private void triggerBlink() {
         if(nTouch <= sequence.size()) {
             String deviceToStart = sequence.get(nTouch - 1);
-            setBlinkDevice(deviceToStart);
+            setBlinkDevice(deviceToStart,true);
             increaseNLight();
         }
     }
@@ -109,9 +109,9 @@ public class SimonGame {
                 .set(data, SetOptions.merge());
     }
 
-    private void setBlinkDevice(String deviceID){
+    private void setBlinkDevice(String deviceID,boolean blink){
         Map<String, Object> data = new HashMap<>();
-        data.put("blink", true);
+        data.put("blink", blink);
 
         db.collection("sessions/" + sessionID + "/simonGame").document(deviceID)
                 .set(data, SetOptions.merge());
@@ -193,6 +193,9 @@ public class SimonGame {
 
                 if (snapshot != null && snapshot.exists()) {
                     if (snapshot.getBoolean("blink")) {
+
+                        setBlinkDevice(deviceID,false);
+
                         TimerTask taskOn = new TimerTask() {
                             public void run() {
                                 if (listener != null) {
@@ -244,7 +247,7 @@ public class SimonGame {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    nTouch = Integer.parseInt(document.getString("nLight"))+1;
+                    nTouch = Integer.parseInt(document.getString("nLight"));
                     triggerBlink();
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());
