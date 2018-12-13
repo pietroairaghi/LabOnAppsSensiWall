@@ -28,11 +28,12 @@
         <activity
             android:name=".WallActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".WearTestActivity"></activity>
+        <activity android:name=".WearTestActivity" />
 
         <service android:name=".WearService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+
                 <data
                     android:host="*"
                     android:pathPrefix=""
@@ -40,6 +41,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+
                 <data
                     android:host="*"
                     android:pathPrefix=""
@@ -47,6 +49,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".SmartWatchActivity"></activity>
     </application>
 
 </manifest>
