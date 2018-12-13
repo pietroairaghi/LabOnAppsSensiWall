@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -23,7 +24,7 @@ import java.util.Map;
 
 public class SessionActivity extends AppCompatActivity {
 
-    public static final String SESSION_ID = "Session ID";
+    public static String SESSION_ID = "Session ID";
     private static final String TAG = "SessionActivity";
 
     private String sessionID; // global to be send to other activities
@@ -51,8 +52,8 @@ public class SessionActivity extends AppCompatActivity {
             newSession.put("name", "New Session");
             newSession.put("owner", device.getDeviceID());
 
-            db.collection("sessions").document()
-                    .set(newSession)
+            DocumentReference docNew = db.collection("sessions").document();
+            docNew.set(newSession)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -65,6 +66,7 @@ public class SessionActivity extends AppCompatActivity {
                             Log.w(TAG, "Error writing document", e);
                         }
                     });
+            sessionID = docNew.getId();
         }
 
         TextView session = findViewById(R.id.sessionName);
