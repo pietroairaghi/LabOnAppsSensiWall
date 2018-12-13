@@ -38,6 +38,7 @@ public class SimonGame {
     private int sequenceLength = 10;
     private String color;
     private List<String> sequence = new ArrayList<>();
+    private String sequenceString = "";
     public boolean isPlaying = false;
     public boolean isLauncher = false;
     public int nTouch = 1;
@@ -96,7 +97,7 @@ public class SimonGame {
             int randIndex=new Random().nextInt(maxN);
             sequence.add(listDevicesID.get(randIndex));
         }
-        String sequenceString = "";
+        sequenceString = "";
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             sequenceString = String.join(",", sequence);
         }
@@ -290,9 +291,12 @@ public class SimonGame {
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    String sequenceString = snapshot.getString("sequence");
-                    List<String> items = Arrays.asList(sequenceString.split("\\s*,\\s*"));
-                    sequence = items;
+                    String seqString = snapshot.getString("sequence");
+                    if (!sequenceString.equals(seqString)) {
+                        List<String> items = Arrays.asList(seqString.split("\\s*,\\s*"));
+                        sequence = items;
+                        drawMe();
+                    }
                 } else {
                     Log.d(TAG, "Current data: null");
                 }

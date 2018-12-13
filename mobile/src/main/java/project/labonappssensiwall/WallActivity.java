@@ -81,11 +81,13 @@ public class WallActivity extends AppCompatActivity {
             public void thereWeGo() {
                 if(simonLauncher) {
                     simonGame.startGame();
-                }else{
-                    simonGame.waitForStart();
                 }
             }
         });
+
+        if(!simonLauncher){
+            simonGame.waitForStart();
+        }
 
 
     }
