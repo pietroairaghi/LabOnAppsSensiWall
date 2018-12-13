@@ -19,6 +19,7 @@ public class WallActivity extends AppCompatActivity {
 
     private OpenGLView openGLView;
     private DrawingHandler drawingHandler;
+    private SimonGame simonGame;
 
     private String sessionID;
     private Device device;
@@ -42,6 +43,15 @@ public class WallActivity extends AppCompatActivity {
             @Override
             public void onUpdate() {
                 dacciDentro();
+            }
+        });
+
+        simonGame = new SimonGame(device.getDeviceID(),sessionID);
+
+        simonGame.setListener(new SimonGame.gameListener() {
+            @Override
+            public void onDrawRequest() {
+                Log.d("qualcosa","qualcosina");
             }
         });
 
@@ -69,16 +79,6 @@ public class WallActivity extends AppCompatActivity {
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
-
-    // Shows the system bars by removing all the flags
-// except for the ones that make the content appear under the system bars.
-    private void showSystemUI() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
-
 
     @Override
     protected void onResume() {
