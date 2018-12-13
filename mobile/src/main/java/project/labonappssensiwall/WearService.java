@@ -298,16 +298,20 @@ public class WearService extends WearableListenerService {
     void sendMessageToNodes(final String message, final String path) {
         Log.v(TAG, "Sending message " + message);
         // Lists all the nodes (devices) connected to the Wear API
-        Wearable.getNodeClient(this).getConnectedNodes().addOnCompleteListener(new OnCompleteListener<List<Node>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Node>> listTask) {
-                List<Node> nodes = listTask.getResult();
-                for (Node node : nodes) {
-                    Log.v(TAG, "Try to send message to a specific node");
-                    WearService.this.sendMessage(message, path, node.getId());
+        try {
+            Wearable.getNodeClient(this).getConnectedNodes().addOnCompleteListener(new OnCompleteListener<List<Node>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<Node>> listTask) {
+                    List<Node> nodes = listTask.getResult();
+                    for (Node node : nodes) {
+                        Log.v(TAG, "Try to send message to a specific node");
+                        WearService.this.sendMessage(message, path, node.getId());
+                    }
                 }
-            }
-        });
+            });
+        }catch (Exception e){
+            Log.w(TAG,"no smart watch connected");
+        }
     }
 
     void sendPutDataMapRequest(PutDataMapRequest putDataMapRequest) {
